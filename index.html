@@ -5,25 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rubi Shop</title>
     <style>
-        /* --- 0. GLOBAL STYLES & SETUP --- */
+        /* --- 0. GLOBAL STYLES & MODERN SETUP --- */
         :root {
-            --apple-blue: #007aff;
-            --background-light: #f5f5f7;
-            --card-light: #ffffff;
-            --text-primary-light: #1d1d1f;
-            --text-secondary-light: #6e6e73;
-            --separator-light: #dcdcdc;
-            --button-get-bg: #eef5ff;
-            --button-open-bg: #e8e8ea;
-            --button-open-text: #333;
+            --app-blue: #0A84FF;
+            --background-dark: #121212;
+            --card-dark: rgba(30, 30, 30, 0.7); /* Frosted Glass Effect */
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary-dark: #FFFFFF;
+            --text-secondary-dark: #a1a1a6;
+            --separator-dark: #3a3a3c;
+            --button-get-bg: var(--app-blue);
+            --button-get-text: #FFFFFF;
+            --button-open-bg: #3a3a3c;
+            --button-open-text: #FFFFFF;
+        }
+
+        @supports (backdrop-filter: blur(20px)) {
+            :root {
+                --card-dark: rgba(44, 44, 46, 0.75);
+            }
         }
 
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--background-light);
-            color: var(--text-primary-light);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary-dark);
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .page-view { display: none; }
@@ -32,81 +41,108 @@
         .action-button {
             font-weight: bold;
             padding: 8px 25px;
-            border-radius: 20px;
+            border-radius: 999px;
             text-decoration: none;
             font-size: 14px;
             border: none;
             cursor: pointer;
-            transition: transform 0.1s ease-in-out;
+            transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.2s;
         }
-        .action-button:active { transform: scale(0.95); }
+        .action-button:hover { transform: scale(1.05); }
+        .action-button:active { transform: scale(0.98); }
 
-        .get-button {
-            background-color: var(--button-get-bg);
-            color: var(--apple-blue);
-        }
-        .open-button {
-            background-color: var(--button-open-bg);
-            color: var(--button-open-text);
-        }
+        .get-button { background-color: var(--button-get-bg); color: var(--button-get-text); }
+        .open-button { background-color: var(--button-open-bg); color: var(--button-open-text); }
 
         /* --- 1. DESKTOP VIEW STYLES --- */
         #desktop-view { display: flex; height: 100vh; overflow: hidden; }
-        .desktop-sidebar { width: 240px; background-color: #e8e8ea; padding: 20px; flex-shrink: 0; display: flex; flex-direction: column; }
-        .desktop-sidebar h1 { font-size: 24px; margin: 20px 0; }
-        .desktop-sidebar .search-box { width: 100%; padding: 8px 12px; border-radius: 8px; border: none; background-color: #dcdce0; font-size: 14px; margin-bottom: 20px; box-sizing: border-box; }
-        .desktop-sidebar .nav-item { padding: 10px; border-radius: 6px; font-weight: 500; cursor: pointer; }
-        .desktop-sidebar .nav-item.active { background-color: #d1d1d6; }
+        .desktop-sidebar {
+            width: 240px;
+            background-color: #1c1c1e;
+            padding: 20px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--card-border);
+        }
+        .desktop-sidebar h1 { font-size: 24px; margin: 20px 0; font-weight: 700; }
+        .desktop-sidebar .search-box {
+            width: 100%; padding: 10px 14px; border-radius: 10px; border: none;
+            background-color: #3a3a3c; font-size: 14px; margin-bottom: 20px;
+            box-sizing: border-box; color: var(--text-primary-dark);
+        }
+        .desktop-sidebar .nav-item { padding: 10px 12px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: background-color 0.2s; }
+        .desktop-sidebar .nav-item:hover { background-color: rgba(255,255,255,0.05); }
+        .desktop-sidebar .nav-item.active { background-color: var(--app-blue); color: white; }
         
         .desktop-content { flex-grow: 1; overflow-y: auto; padding: 40px; }
-        .desktop-section h2 { font-size: 22px; margin: 40px 0 15px 0; }
+        .desktop-section h2 { font-size: 24px; font-weight: 700; margin: 40px 0 20px 0; }
         
-        .hero-card { background-color: var(--card-light); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 20px; }
-        .hero-card .banner { height: 300px; background-size: cover; background-position: center; position: relative; }
-        .hero-card .banner .overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; color: white; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); }
-        .hero-card .overlay-subtitle { font-size: 14px; font-weight: 600; text-transform: uppercase; color: #a9d8ff; }
-        .hero-card .overlay-title { font-size: 28px; font-weight: bold; margin: 4px 0; }
+        .hero-card { border-radius: 24px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 30px; }
+        .hero-card .banner { height: 350px; background-size: cover; background-position: center; position: relative; }
+        .hero-card .banner .overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 30px; color: white; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); }
+        .hero-card .overlay-subtitle { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #a9d8ff; }
+        .hero-card .overlay-title { font-size: 32px; font-weight: bold; margin: 4px 0; }
         
         .app-carousel { display: flex; flex-direction: column; gap: 10px; }
-        .app-carousel-item { display: flex; align-items: center; gap: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--separator-light); }
-        .app-carousel-item:last-child { border-bottom: none; }
-        .app-carousel-item .icon { width: 60px; height: 60px; border-radius: 12px; flex-shrink: 0;}
+        .app-carousel-item {
+            display: flex; align-items: center; gap: 15px; padding: 15px;
+            background-color: var(--card-dark); border: 1px solid var(--card-border);
+            border-radius: 16px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        }
+        .app-carousel-item .icon { width: 60px; height: 60px; border-radius: 12px; flex-shrink: 0; }
         .app-carousel-item .details { flex-grow: 1; }
-        .app-carousel-item .name { font-weight: 500; margin: 0 0 4px; }
-        .app-carousel-item .category { color: var(--text-secondary-light); font-size: 14px; margin: 0; }
-        
-        .my-apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px; text-align: center; }
-        .my-apps-grid .app-icon-item .icon { width: 80px; height: 80px; border-radius: 20px; margin-bottom: 8px; }
-        .my-apps-grid .app-icon-item .name { font-size: 13px; font-weight: 500; }
+        .app-carousel-item .name { font-weight: 600; font-size: 16px; margin: 0 0 4px; }
+        .app-carousel-item .category { color: var(--text-secondary-dark); font-size: 14px; margin: 0; }
+
+        /* PLATFORM-AWARE HOME SCREENS (DESKTOP) */
+        .my-apps-grid { display: grid; gap: 20px; }
+        .my-apps-grid .app-icon-item { text-align: center; }
+        /* For Mac */
+        #mac-home { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+        #mac-home .app-icon-item .icon { width: 80px; height: 80px; border-radius: 20px; margin-bottom: 8px; }
+        #mac-home .app-icon-item .name { font-size: 13px; font-weight: 500; }
+        /* For Windows */
+        #windows-home { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+        #windows-home .app-icon-item { display: flex; align-items: center; gap: 10px; padding: 10px; background-color: #2b2b2b; border-radius: 6px; }
+        #windows-home .app-icon-item .icon { width: 40px; height: 40px; border-radius: 6px; }
+        #windows-home .app-icon-item .name { font-size: 14px; font-weight: 600; }
 
         /* --- 2. MOBILE VIEW STYLES --- */
         #mobile-view { width: 100%; }
         .mobile-header { padding: 16px; }
         .mobile-header h1 { font-size: 34px; font-weight: 700; margin: 0; }
-        .mobile-header p { color: var(--text-secondary-light); font-weight: 600; margin: 0; text-transform: uppercase; }
-        #mobile-search-box { display: block; width: calc(100% - 32px); margin: 0 16px 16px; padding: 12px 16px; font-size: 16px; border: none; background-color: #e8e8ea; border-radius: 10px; box-sizing: border-box; }
+        .mobile-header p { color: var(--text-secondary-dark); font-weight: 600; margin: 0; text-transform: uppercase; }
+        #mobile-search-box { display: block; width: calc(100% - 32px); margin: 0 16px 16px; padding: 12px 16px; font-size: 16px; border: none; background-color: #3a3a3c; border-radius: 10px; box-sizing: border-box; color: var(--text-primary-dark); }
         
         .mobile-content-area { padding: 0 16px 32px; display: flex; flex-direction: column; gap: 24px; }
-        .mobile-card { border-radius: 16px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); background-color: var(--card-light); }
-        .mobile-card .banner { height: 250px; background-size: cover; background-position: center; position: relative; }
-        .mobile-card .banner .overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; color: white; background: linear-gradient(to top, rgba(0,0,0,0.8) 20%, transparent); }
-        .mobile-card .overlay .subtitle { font-size: 12px; font-weight: 600; text-transform: uppercase; opacity: 0.8; }
-        .mobile-card .overlay .title { font-size: 26px; font-weight: 700; margin: 4px 0; }
+        .mobile-card {
+            border-radius: 20px; overflow: hidden;
+            background-color: var(--card-dark); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--card-border); box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .mobile-card .banner { height: 300px; background-size: cover; background-position: center; position: relative; }
+        .mobile-card .banner .overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; color: white; background: linear-gradient(to top, rgba(0,0,0,0.85) 30%, transparent); }
+        .mobile-card .overlay .subtitle { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; }
+        .mobile-card .overlay .title { font-size: 28px; font-weight: 700; margin: 4px 0; }
         
         .mobile-card .app-info { display: flex; align-items: center; gap: 12px; padding: 16px; }
         .mobile-card .app-info .icon { width: 50px; height: 50px; border-radius: 12px; flex-shrink: 0; }
         .mobile-card .app-info .details { flex-grow: 1; }
-        .mobile-card .app-info .name { font-weight: 500; font-size: 16px; margin: 0 0 2px; }
-        .mobile-card .app-info .category { color: var(--text-secondary-light); font-size: 14px; margin: 0; }
-        .mobile-card .app-info .in-app { font-size: 10px; color: var(--text-secondary-light); display: block; text-align: center; margin-top: 4px; }
+        .mobile-card .app-info .name { font-weight: 600; font-size: 16px; margin: 0 0 2px; }
+        .mobile-card .app-info .category { color: var(--text-secondary-dark); font-size: 14px; margin: 0; }
+        .mobile-card .app-info .in-app { font-size: 10px; color: var(--text-secondary-dark); display: block; text-align: center; margin-top: 4px; }
 
+        /* MOBILE HOME SCREEN */
+        .mobile-home-screen { padding: 16px; background-color: transparent; }
+        .mobile-home-screen h2 { font-size: 22px; margin: 0 0 15px 0; font-weight: 700; }
+        .mobile-home-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; text-align: center; }
+        .mobile-home-grid .app-icon-item .icon { width: 60px; height: 60px; border-radius: 15px; margin-bottom: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .mobile-home-grid .app-icon-item .name { font-size: 12px; font-weight: 500; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
 
-    <!-- ============================================= -->
-    <!-- ==== DESKTOP LAYOUT (FOR MAC AND WINDOWS) === -->
-    <!-- ============================================= -->
     <div id="desktop-view" class="page-view">
         <aside class="desktop-sidebar">
             <h1>Rubi Shop</h1>
@@ -119,9 +155,6 @@
         <main id="desktop-content-area" class="desktop-content"></main>
     </div>
 
-    <!-- ============================================= -->
-    <!-- ====== MOBILE LAYOUT (FOR PHONES) ========= -->
-    <!-- ============================================= -->
     <div id="mobile-view" class="page-view">
         <header class="mobile-header">
             <p id="mobile-date">Thursday 3 July</p>
@@ -134,28 +167,29 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-
         // =======================================================
         //  1. DATA STORE - EDIT YOUR APPS AND GAMES HERE
         // =======================================================
-        //  ❗️❗️❗️ IMPORTANT: Add your direct download link to the `downloadUrl` property.
         const database = [
-            { id: 'rubi01', name: 'Rubi Shop', developer: 'Rubi Inc.', category: 'Shopping & Productivity', icon: 'https://placehold.co/120x120/7e57c2/white?text=Rubi', banner: 'https://placehold.co/800x400/7e57c2/white?text=Welcome+to+Rubi+Shop', type: 'hero', subtitle: 'Editor\'s Choice', downloadUrl: '#' },
-            { id: 'game01', name: 'Asphalt Legends', developer: 'Gameloft', category: 'Racing Game', icon: 'https://placehold.co/120x120/f44336/white?text=AL', banner: 'https://placehold.co/800x400/f44336/white?text=Asphalt+Legends', type: 'hero', subtitle: 'Deep Dive', downloadUrl: '#' },
+            { id: 'rubi01', name: 'Rubi Shop', developer: 'Rubi Inc.', category: 'Shopping & Productivity', icon: 'https://placehold.co/120x120/7e57c2/white?text=Rubi', banner: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=1887&auto=format&fit=crop', type: 'hero', subtitle: 'Editor\'s Choice', downloadUrl: '#' },
+            { id: 'game01', name: 'Asphalt Legends', developer: 'Gameloft', category: 'Racing Game', icon: 'https://placehold.co/120x120/f44336/white?text=AL', banner: 'https://images.unsplash.com/photo-1614294109339-d4d1893a196f?q=80&w=1932&auto=format&fit=crop', type: 'hero', subtitle: 'Deep Dive', downloadUrl: '#' },
             { id: 'app01', name: 'Pixelmator Pro', developer: 'Pixelmator Team', category: 'Pro image editing', icon: 'https://placehold.co/120x120/00bcd4/white?text=Px', type: 'app', downloadUrl: '#' },
             { id: 'app02', name: 'MusicHarbor', developer: 'Marcos Tanaka', category: 'Follow your favourite artists', icon: 'https://placehold.co/120x120/e91e63/white?text=MH', type: 'app', downloadUrl: '#' },
             { id: 'app03', name: 'LinkedIn', developer: 'LinkedIn Corporation', category: 'Job Search & News', icon: 'https://placehold.co/120x120/0077b5/white?text=in', type: 'app', downloadUrl: '#' },
-            { id: 'game02', name: 'RoboCop: Rogue City', developer: 'Teyon', category: 'Clean up the mean streets', icon: 'https://placehold.co/120x120/607d8b/white?text=RC', type: 'game', downloadUrl: '#' },
+            { id: 'game02', name: 'RoboCop', developer: 'Teyon', category: 'Clean up the streets', icon: 'https://placehold.co/120x120/607d8b/white?text=RC', type: 'game', downloadUrl: '#' },
             { id: 'game03', name: 'CyberRunner', developer: 'Neon Dreams', category: 'Endless runner', icon: 'https://placehold.co/120x120/ff4081/white?text=CR', type: 'game', downloadUrl: '#' },
         ];
-
+        
         // =======================================================
         //  2. APP STATE & LOCAL STORAGE
         // =======================================================
-        let installedApps = new Set(JSON.parse(localStorage.getItem('rubiShopInstalledApps')) || []);
+        const state = {
+            installedApps: new Set(JSON.parse(localStorage.getItem('rubiShopInstalledApps')) || []),
+            platform: 'unknown'
+        };
 
         function saveState() {
-            localStorage.setItem('rubiShopInstalledApps', JSON.stringify(Array.from(installedApps)));
+            localStorage.setItem('rubiShopInstalledApps', JSON.stringify(Array.from(state.installedApps)));
         }
 
         // =======================================================
@@ -164,163 +198,123 @@
         const desktopContent = document.getElementById('desktop-content-area');
         const mobileContent = document.getElementById('mobile-content-area');
 
-        // --- Master Render Function ---
-        function render(itemsToRender, view = 'discover') {
-            if (isMobile) {
-                renderMobile(itemsToRender, view);
+        function render(items, view = 'discover') {
+            if (state.platform === 'mobile') {
+                renderMobile(items, view);
             } else {
-                renderDesktop(itemsToRender, view);
+                renderDesktop(items, view);
             }
         }
-
+        
         // --- Desktop Renderers ---
         function renderDesktop(items, view) {
             if (view === 'discover') {
                 const heroItems = items.filter(i => i.type === 'hero');
                 const gameItems = items.filter(i => i.type === 'game');
                 const appItems = items.filter(i => i.type === 'app');
-                let html = '';
-                if (heroItems.length > 0) html += heroItems.map(createDesktopHero).join('');
-                if (appItems.length > 0) html += createDesktopSection('Apps We Love', appItems);
-                if (gameItems.length > 0) html += createDesktopSection('Games We Love', gameItems);
+                let html = heroItems.map(createDesktopHero).join('');
+                if (appItems.length > 0) html += createDesktopSection('Apps', appItems);
+                if (gameItems.length > 0) html += createDesktopSection('Games', gameItems);
                 desktopContent.innerHTML = html;
             } else if (view === 'my-apps') {
-                const myApps = database.filter(app => installedApps.has(app.id));
-                desktopContent.innerHTML = `
-                    <div class="desktop-section">
-                        <h2>My Apps</h2>
-                        <div class="my-apps-grid">${myApps.map(createDesktopIcon).join('')}</div>
-                    </div>`;
+                const myApps = database.filter(app => state.installedApps.has(app.id));
+                const homeScreenId = state.platform === 'windows' ? 'windows-home' : 'mac-home';
+                desktopContent.innerHTML = `<div class="desktop-section"><h2>${state.platform === 'windows' ? 'Pinned Apps' : 'Applications'}</h2><div id="${homeScreenId}" class="my-apps-grid">${myApps.map(createDesktopIcon).join('')}</div></div>`;
             }
         }
         
-        function createDesktopHero(item) {
-             return `<div class="hero-card"><div class="banner" style="background-image: url('${item.banner}')"><div class="overlay"><div class="overlay-subtitle">${item.subtitle || ''}</div><div class="overlay-title">${item.name}</div></div></div></div>`;
-        }
-        
-        function createDesktopSection(title, items) {
-            return `<div class="desktop-section"><h2>${title}</h2><div class="app-carousel">${items.map(createDesktopItem).join('')}</div></div>`;
-        }
-
+        function createDesktopHero(item) { return `<div class="hero-card"><div class="banner" style="background-image: url('${item.banner}')"><div class="overlay"><div class="overlay-subtitle">${item.subtitle || ''}</div><div class="overlay-title">${item.name}</div></div></div></div>`; }
+        function createDesktopSection(title, items) { return `<div class="desktop-section"><h2>${title}</h2><div class="app-carousel">${items.map(createDesktopItem).join('')}</div></div>`; }
         function createDesktopItem(item) {
-            const isInstalled = installedApps.has(item.id);
-            const buttonClass = isInstalled ? 'open-button' : 'get-button';
-            const buttonText = isInstalled ? 'OPEN' : 'GET';
-            return `
-                <div class="app-carousel-item">
-                    <img src="${item.icon}" alt="${item.name}" class="icon">
-                    <div class="details"><h3 class="name">${item.name}</h3><p class="category">${item.category}</p></div>
-                    <button class="action-button ${buttonClass}" data-id="${item.id}" data-url="${item.downloadUrl}">${buttonText}</button>
-                </div>`;
+            const isInstalled = state.installedApps.has(item.id);
+            return `<div class="app-carousel-item"><img src="${item.icon}" alt="${item.name}" class="icon"><div class="details"><h3 class="name">${item.name}</h3><p class="category">${item.category}</p></div><button class="action-button ${isInstalled ? 'open-button' : 'get-button'}" data-id="${item.id}" data-url="${item.downloadUrl}">${isInstalled ? 'OPEN' : 'GET'}</button></div>`;
         }
-        
         function createDesktopIcon(item) {
             return `<div class="app-icon-item"><img src="${item.icon}" class="icon"><div class="name">${item.name}</div></div>`;
         }
 
         // --- Mobile Renderers ---
         function renderMobile(items, view) {
+            const myApps = database.filter(app => state.installedApps.has(app.id));
             let myAppsHtml = '';
-            if (installedApps.size > 0) {
-                 const myApps = database.filter(app => installedApps.has(app.id));
-                 myAppsHtml = `<div class="mobile-card"><h2>My Apps</h2><div class="my-apps-grid" style="padding: 16px;">${myApps.map(createDesktopIcon).join('')}</div></div>`;
+            if (myApps.length > 0) {
+                myAppsHtml = `<div class="mobile-home-screen"><h2>Home Screen</h2><div class="mobile-home-grid">${myApps.map(createDesktopIcon).join('')}</div></div>`;
             }
-
             const contentHtml = items.map(item => item.type === 'hero' ? createMobileHeroCard(item) : createMobileAppCard(item)).join('');
             mobileContent.innerHTML = myAppsHtml + contentHtml;
         }
-        
-        function createMobileHeroCard(item) {
-            return `<div class="mobile-card" data-id="${item.id}"><div class="banner" style="background-image: url('${item.banner}')"><div class="overlay"><div class="subtitle">${item.subtitle || ''}</div><div class="title">${item.name}</div></div></div>${createMobileAppInfo(item)}</div>`;
-        }
-        
-        function createMobileAppCard(item) {
-            return `<div class="mobile-card" data-id="${item.id}">${createMobileAppInfo(item)}</div>`;
-        }
 
+        function createMobileHeroCard(item) { return `<div class="mobile-card"><div class="banner" style="background-image: url('${item.banner}')"><div class="overlay"><div class="subtitle">${item.subtitle || ''}</div><div class="title">${item.name}</div></div></div>${createMobileAppInfo(item)}</div>`; }
+        function createMobileAppCard(item) { return `<div class="mobile-card">${createMobileAppInfo(item)}</div>`; }
         function createMobileAppInfo(item) {
-            const isInstalled = installedApps.has(item.id);
-            const buttonClass = isInstalled ? 'open-button' : 'get-button';
-            const buttonText = isInstalled ? 'OPEN' : 'GET';
-            return `
-                <div class="app-info">
-                    <img src="${item.icon}" class="icon"><div class="details"><h3 class="name">${item.name}</h3><p class="category">${item.developer}</p></div>
-                    <div><button class="action-button ${buttonClass}" data-id="${item.id}" data-url="${item.downloadUrl}">${buttonText}</button><span class="in-app">In-App Purchases</span></div>
-                </div>`;
+            const isInstalled = state.installedApps.has(item.id);
+            return `<div class="app-info"><img src="${item.icon}" class="icon"><div class="details"><h3 class="name">${item.name}</h3><p class="category">${item.developer}</p></div><div><button class="action-button ${isInstalled ? 'open-button' : 'get-button'}" data-id="${item.id}" data-url="${item.downloadUrl}">${isInstalled ? 'OPEN' : 'GET'}</button><span class="in-app">In-App Purchases</span></div></div>`;
         }
-
+        
         // =======================================================
         //  4. EVENT HANDLERS & LOGIC
         // =======================================================
-        const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent) || window.innerWidth < 768;
-
-        // --- Button Click Handler ---
         document.body.addEventListener('click', (e) => {
             if (e.target.matches('.action-button')) {
                 const button = e.target;
                 const appId = button.dataset.id;
                 const app = database.find(a => a.id === appId);
 
-                if (installedApps.has(appId)) {
-                    // It's an "OPEN" button
+                if (state.installedApps.has(appId)) {
                     alert(`Simulating opening ${app.name}...`);
                 } else {
-                    // It's a "GET" button
-                    alert(`Starting download for ${app.name}.\nThe app will appear in 'My Apps' once installed.`);
-                    
-                    // Trigger the actual download
+                    alert(`Downloading ${app.name}...`);
                     window.location.href = button.dataset.url;
-
-                    // Update state and UI
-                    installedApps.add(appId);
+                    state.installedApps.add(appId);
                     saveState();
-                    button.classList.remove('get-button');
-                    button.classList.add('open-button');
-                    button.textContent = 'OPEN';
-                    
-                    // Re-render the "My Apps" section if it's visible
-                    if (document.querySelector('.nav-item.active')?.dataset.section === 'my-apps' || isMobile) {
-                        setTimeout(() => render(database, isMobile ? 'discover' : 'my-apps'), 100);
-                    }
+                    render(database, document.querySelector('.nav-item.active')?.dataset.section || 'discover');
                 }
             }
         });
 
-        // --- Search Handler ---
         function handleSearch(query) {
+             const activeView = document.querySelector('.nav-item.active')?.dataset.section || 'discover';
              if (query.length > 0) {
-                const filteredItems = database.filter(item => 
-                    item.name.toLowerCase().includes(query) || 
-                    item.developer.toLowerCase().includes(query)
-                );
-                render(filteredItems);
+                const filtered = database.filter(item => item.name.toLowerCase().includes(query) || item.developer.toLowerCase().includes(query));
+                render(filtered, activeView);
             } else {
-                render(database, document.querySelector('.nav-item.active')?.dataset.section || 'discover');
+                render(database, activeView);
             }
         }
         document.getElementById('desktop-search-box').addEventListener('input', (e) => handleSearch(e.target.value.toLowerCase()));
         document.getElementById('mobile-search-box').addEventListener('input', (e) => handleSearch(e.target.value.toLowerCase()));
         
-        // --- Desktop Navigation ---
         document.getElementById('desktop-nav').addEventListener('click', (e) => {
             if(e.target.matches('.nav-item')) {
-                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('#desktop-nav .nav-item').forEach(el => el.classList.remove('active'));
                 e.target.classList.add('active');
                 render(database, e.target.dataset.section);
             }
         });
-
+        
         // =======================================================
         //  5. INITIALIZATION
         // =======================================================
-        if (isMobile) {
-            document.getElementById('mobile-view').style.display = 'block';
-            document.getElementById('mobile-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
-        } else {
-            document.getElementById('desktop-view').style.display = 'flex';
+        function initialize() {
+            const userAgent = navigator.userAgent;
+            if (/Mobi|Android|iPhone/i.test(userAgent) || window.innerWidth < 768) {
+                state.platform = 'mobile';
+                document.getElementById('mobile-view').style.display = 'block';
+                document.getElementById('mobile-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
+            } else if (/Win/i.test(userAgent)) {
+                state.platform = 'windows';
+                document.getElementById('desktop-view').style.display = 'flex';
+            } else if (/Mac/i.test(userAgent)) {
+                state.platform = 'mac';
+                document.getElementById('desktop-view').style.display = 'flex';
+            } else {
+                state.platform = 'desktop-other';
+                document.getElementById('desktop-view').style.display = 'flex';
+            }
+            render(database, 'discover');
         }
-        
-        render(database, 'discover'); // Initial page load
+
+        initialize();
     });
     </script>
 </body>
