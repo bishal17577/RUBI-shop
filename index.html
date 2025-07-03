@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubi Shop</title>
+    <style>
+        /* --- 0. GLOBAL STYLES & SETUP --- */
+        :root {
+            --apple-blue: #007aff;
+            --background-light: #f5f5f7;
+            --card-light: #ffffff;
+            --text-primary-light: #1d1d1f;
+            --text-secondary-light: #6e6e73;
+            --separator-light: #dcdcdc;
+            --button-get-bg: #eef5ff;
+            --button-open-bg: #e8e8ea;
+            --button-open-text: #333;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-primary-light);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page-view { display: none; }
+        a { text-decoration: none; }
+
+        .action-button {
+            font-weight: bold;
+            padding: 8px 25px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s ease-in-out;
+        }
+        .action-button:active { transform: scale(0.95); }
+
+        .get-button {
+            background-color: var(--button-get-bg);
+            color: var(--apple-blue);
+        }
+        .open-button {
+            background-color: var(--button-open-bg);
+            color: var(--button-open-text);
+        }
+
+        /* --- 1. DESKTOP VIEW STYLES --- */
+        #desktop-view { display: flex; height: 100vh; overflow: hidden; }
+        .desktop-sidebar { width: 240px; background-color: #e8e8ea; padding: 20px; flex-shrink: 0; display: flex; flex-direction: column; }
+        .desktop-sidebar h1 { font-size: 24px; margin: 20px 0; }
+        .desktop-sidebar .search-box { width: 100%; padding: 8px 12px; border-radius: 8px; border: none; background-color: #dcdce0; font-size: 14px; margin-bottom: 20px; box-sizing: border-box; }
+        .desktop-sidebar .nav-item { padding: 10px; border-radius: 6px; font-weight: 500; cursor: pointer; }
+        .desktop-sidebar .nav-item.active { background-color: #d1d1d6; }
+        
+        .desktop-content { flex-grow: 1; overflow-y: auto; padding: 40px; }
+        .desktop-section h2 { font-size: 22px; margin: 40px 0 15px 0; }
+        
+        .hero-card { background-color: var(--card-light); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .hero-card .banner { height: 300px; background-size: cover; background-position: center; position: relative; }
+        .hero-card .banner .overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; color: white; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); }
+        .hero-card .overlay-subtitle { font-size: 14px; font-weight: 600; text-transform: uppercase; color: #a9d8ff; }
+        .hero-card .overlay-title { font-size: 28px; font-weight: bold; margin: 4px 0; }
+        
+        .app-carousel { display: flex; flex-direction: column; gap: 10px; }
+        .app-carousel-item { display: flex; align-items: center; gap: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--separator-light); }
+        .app-carousel-item:last-child { border-bottom: none; }
+        .app-carousel-item .icon { width: 60px; height: 60px; border-radius: 12px; flex-shrink: 0;}
+        .app-carousel-item .details { flex-grow: 1; }
+        .app-carousel-item .name { font-weight: 500; margin: 0 0 4px; }
+        .app-carousel-item .category { color: var(--text-secondary-light); font-size: 14px; margin: 0; }
+        
+        .my-apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px; text-align: center; }
+        .my-apps-grid .app-icon-item .icon { width: 80px; height: 80px; border-radius: 20px; margin-bottom: 8px; }
+        .my-apps-grid .app-icon-item .name { font-size: 13px; font-weight: 500; }
+
+        /* --- 2. MOBILE VIEW STYLES --- */
+        #mobile-view { width: 100%; }
+        .mobile-header { padding: 16px; }
+        .mobile-header h1 { font-size: 34px; font-weight: 700; margin: 0; }
+        .mobile-header p { color: var(--text-secondary-light); font-weight: 600; margin: 0; text-transform: uppercase; }
+        #mobile-search-box { display: block; width: calc(100% - 32px); margin: 0 16px 16px; padding: 12px 16px; font-size: 16px; border: none; background-color: #e8e8ea; border-radius: 10px; box-sizing: border-box; }
+        
+        .mobile-content-area { padding: 0 16px 32px; display: flex; flex-direction: column; gap: 24px; }
+        .mobile-card { border-radius: 16px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); background-color: var(--card-light); }
+        .mobile-card .banner { height: 250px; background-size: cover; background-position: center; position: relative; }
+        .mobile-card .banner .overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; color: white; background: linear-gradient(to top, rgba(0,0,0,0.8) 20%, transparent); }
+        .mobile-card .overlay .subtitle { font-size: 12px; font-weight: 600; text-transform: uppercase; opacity: 0.8; }
+        .mobile-card .overlay .title { font-size: 26px; font-weight: 700; margin: 4px 0; }
+        
+        .mobile-card .app-info { display: flex; align-items: center; gap: 12px; padding: 16px; }
+        .mobile-card .app-info .icon { width: 50px; height: 50px; border-radius: 12px; flex-shrink: 0; }
+        .mobile-card .app-info .details { flex-grow: 1; }
+        .mobile-card .app-info .name { font-weight: 500; font-size: 16px; margin: 0 0 2px; }
+        .mobile-card .app-info .category { color: var(--text-secondary-light); font-size: 14px; margin: 0; }
+        .mobile-card .app-info .in-app { font-size: 10px; color: var(--text-secondary-light); display: block; text-align: center; margin-top: 4px; }
+
+    </style>
+</head>
+<body>
+
+    <!-- ============================================= -->
+    <!-- ==== DESKTOP LAYOUT (FOR MAC AND WINDOWS) === -->
+    <!-- ============================================= -->
+    <div id="desktop-view" class="page-view">
+        <aside class="desktop-sidebar">
+            <h1>Rubi Shop</h1>
+            <input type="search" id="desktop-search-box" class="search-box" placeholder="Search...">
+            <nav id="desktop-nav">
+                <div class="nav-item active" data-section="discover">Discover</div>
+                <div class="nav-item" data-section="my-apps">My Apps</div>
+            </nav>
+        </aside>
+        <main id="desktop-content-area" class="desktop-content"></main>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- ====== MOBILE LAYOUT (FOR PHONES) ========= -->
+    <!-- ============================================= -->
+    <div id="mobile-view" class="page-view">
+        <header class="mobile-header">
+            <p id="mobile-date">Thursday 3 July</p>
+            <h1>Today</h1>
+        </header>
+        <input type="search" id="mobile-search-box" placeholder="Search Apps & Games...">
+        <div id="mobile-content-area" class="mobile-content-area"></div>
+    </div>
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // =======================================================
+        //  1. DATA STORE - EDIT YOUR APPS AND GAMES HERE
+        // =======================================================
+        //  ❗️❗️❗️ IMPORTANT: Add your direct download link to the `downloadUrl` property.
+        const database = [
+            { id: 'rubi01', name: 'Rubi Shop', developer: 'Rubi Inc.', category: 'Shopping & Productivity', icon: 'https://placehold.co/120x120/7e57c2/white?text=Rubi', banner: 'https://placehold.co/800x400/7e57c2/white?text=Welcome+to+Rubi+Shop', type: 'hero', subtitle: 'Editor\'s Choice', downloadUrl: '#' },
+            { id: 'game01', name: 'Asphalt Legends', developer: 'Gameloft', category: 'Racing Game', icon: 'https://placehold.co/120x120/f44336/white?text=AL', banner: 'https://placehold.co/800x400/f44336/white?text=Asphalt+Legends', type: 'hero', subtitle: 'Deep Dive', downloadUrl: '#' },
+            { id: 'app01', name: 'Pixelmator Pro', developer: 'Pixelmator Team', category: 'Pro image editing', icon: 'https://placehold.co/120x120/00bcd4/white?text=Px', type: 'app', downloadUrl: '#' },
+            { id: 'app02', name: 'MusicHarbor', developer: 'Marcos Tanaka', category: 'Follow your favourite artists', icon: 'https://placehold.co/120x120/e91e63/white?text=MH', type: 'app', downloadUrl: '#' },
+            { id: 'app03', name: 'LinkedIn', developer: 'LinkedIn Corporation', category: 'Job Search & News', icon: 'https://placehold.co/120x120/0077b5/white?text=in', type: 'app', downloadUrl: '#' },
+            { id: 'game02', name: 'RoboCop: Rogue City', developer: 'Teyon', category: 'Clean up the mean streets', icon: 'https://placehold.co/120x120/607d8b/white?text=RC', type: 'game', downloadUrl: '#' },
+            { id: 'game03', name: 'CyberRunner', developer: 'Neon Dreams', category: 'Endless runner', icon: 'https://placehold.co/120x120/ff4081/white?text=CR', type: 'game', downloadUrl: '#' },
+        ];
+
+        // =======================================================
+        //  2. APP STATE & LOCAL STORAGE
+        // =======================================================
+        let installedApps = new Set(JSON.parse(localStorage.getItem('rubiShopInstalledApps')) || []);
+
+        function saveState() {
+            localStorage.setItem('rubiShopInstalledApps', JSON.stringify(Array.from(installedApps)));
+        }
+
+        // =======================================================
+        //  3. DYNAMIC RENDERERS
+        // =======================================================
+        const desktopContent = document.getElementById('desktop-content-area');
+        const mobileContent = document.getElementById('mobile-content-area');
+
+        // --- Master Render Function ---
+        function render(itemsToRender, view = 'discover') {
+            if (isMobile) {
+                renderMobile(itemsToRender, view);
+            } else {
+                renderDesktop(itemsToRender, view);
+            }
+        }
+
+        // --- Desktop Renderers ---
+        function renderDesktop(items, view) {
+            if (view === 'discover') {
+                const heroItems = items.filter(i => i.type === 'hero');
+                const gameItems = items.filter(i => i.type === 'game');
+                const appItems = items.filter(i => i.type === 'app');
+                let html = '';
+                if (heroItems.length > 0) html += heroItems.map(createDesktopHero).join('');
+                if (appItems.length > 0) html += createDesktopSection('Apps We Love', appItems);
+                if (gameItems.length > 0) html += createDesktopSection('Games We Love', gameItems);
+                desktopContent.innerHTML = html;
+            } else if (view === 'my-apps') {
+                const myApps = database.filter(app => installedApps.has(app.id));
+                desktopContent.innerHTML = `
+                    <div class="desktop-section">
+                        <h2>My Apps</h2>
+                        <div class="my-apps-grid">${myApps.map(createDesktopIcon).join('')}</div>
+                    </div>`;
+            }
+        }
+        
+        function createDesktopHero(item) {
+             return `<div class="hero-card"><div class="banner" style="background-image: url('${item.banner}')"><div class="overlay"><div class="overlay-subtitle">${item.subtitle || ''}</div><div class="overlay-title">${item.name}</div></div></div></div>`;
+        }
+        
+        function createDesktopSection(title, items) {
+            return `<div class="desktop-section"><h2>${title}</h2><div class="app-carousel">${items.map(createDesktopItem).join('')}</div></div>`;
+        }
+
+        function createDesktopItem(item) {
+            const isInstalled = installedApps.has(item.id);
+            const buttonClass = isInstalled ? 'open-button' : 'get-button';
+            const buttonText = isInstalled ? 'OPEN' : 'GET';
+            return `
+                <div class="app-carousel-item">
+                    <img src="${item.icon}" alt="${item.name}" class="icon">
+                    <div class="details"><h3 class="name">${item.name}</h3><p class="category">${item.category}</p></div>
+                    <button class="action-button ${buttonClass}" data-id="${item.id}" data-url="${item.downloadUrl}">${buttonText}</button>
+                </div>`;
+        }
+        
+        function createDesktopIcon(item) {
+            return `<div class="app-icon-item"><img src="${item.icon}" class="icon"><div class="name">${item.name}</div></div>`;
+        }
+
+        // --- Mobile Renderers ---
+        function renderMobile(items, view) {
+            let myAppsHtml = '';
+            if (installedApps.size > 0) {
+                 const myApps = database.filter(app => installedApps.has(app.id));
+                 myAppsHtml = `<div class="mobile-card"><h2>My Apps</h2><div class="my-apps-grid" style="padding: 16px;">${myApps.map(createDesktopIcon).join('')}</div></div>`;
+            }
+
+            const contentHtml = items.map(item => item.type === 'hero' ? createMobileHeroCard(item) : createMobileAppCard(item)).join('');
+            mobileContent.innerHTML = myAppsHtml + contentHtml;
+        }
+        
+        function createMobileHeroCard(item) {
+            return `<div class="mobile-card" data-id="${item.id}"><div class="banner" style="background-image: url('${item.banner}')"><div class="overlay"><div class="subtitle">${item.subtitle || ''}</div><div class="title">${item.name}</div></div></div>${createMobileAppInfo(item)}</div>`;
+        }
+        
+        function createMobileAppCard(item) {
+            return `<div class="mobile-card" data-id="${item.id}">${createMobileAppInfo(item)}</div>`;
+        }
+
+        function createMobileAppInfo(item) {
+            const isInstalled = installedApps.has(item.id);
+            const buttonClass = isInstalled ? 'open-button' : 'get-button';
+            const buttonText = isInstalled ? 'OPEN' : 'GET';
+            return `
+                <div class="app-info">
+                    <img src="${item.icon}" class="icon"><div class="details"><h3 class="name">${item.name}</h3><p class="category">${item.developer}</p></div>
+                    <div><button class="action-button ${buttonClass}" data-id="${item.id}" data-url="${item.downloadUrl}">${buttonText}</button><span class="in-app">In-App Purchases</span></div>
+                </div>`;
+        }
+
+        // =======================================================
+        //  4. EVENT HANDLERS & LOGIC
+        // =======================================================
+        const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent) || window.innerWidth < 768;
+
+        // --- Button Click Handler ---
+        document.body.addEventListener('click', (e) => {
+            if (e.target.matches('.action-button')) {
+                const button = e.target;
+                const appId = button.dataset.id;
+                const app = database.find(a => a.id === appId);
+
+                if (installedApps.has(appId)) {
+                    // It's an "OPEN" button
+                    alert(`Simulating opening ${app.name}...`);
+                } else {
+                    // It's a "GET" button
+                    alert(`Starting download for ${app.name}.\nThe app will appear in 'My Apps' once installed.`);
+                    
+                    // Trigger the actual download
+                    window.location.href = button.dataset.url;
+
+                    // Update state and UI
+                    installedApps.add(appId);
+                    saveState();
+                    button.classList.remove('get-button');
+                    button.classList.add('open-button');
+                    button.textContent = 'OPEN';
+                    
+                    // Re-render the "My Apps" section if it's visible
+                    if (document.querySelector('.nav-item.active')?.dataset.section === 'my-apps' || isMobile) {
+                        setTimeout(() => render(database, isMobile ? 'discover' : 'my-apps'), 100);
+                    }
+                }
+            }
+        });
+
+        // --- Search Handler ---
+        function handleSearch(query) {
+             if (query.length > 0) {
+                const filteredItems = database.filter(item => 
+                    item.name.toLowerCase().includes(query) || 
+                    item.developer.toLowerCase().includes(query)
+                );
+                render(filteredItems);
+            } else {
+                render(database, document.querySelector('.nav-item.active')?.dataset.section || 'discover');
+            }
+        }
+        document.getElementById('desktop-search-box').addEventListener('input', (e) => handleSearch(e.target.value.toLowerCase()));
+        document.getElementById('mobile-search-box').addEventListener('input', (e) => handleSearch(e.target.value.toLowerCase()));
+        
+        // --- Desktop Navigation ---
+        document.getElementById('desktop-nav').addEventListener('click', (e) => {
+            if(e.target.matches('.nav-item')) {
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                e.target.classList.add('active');
+                render(database, e.target.dataset.section);
+            }
+        });
+
+        // =======================================================
+        //  5. INITIALIZATION
+        // =======================================================
+        if (isMobile) {
+            document.getElementById('mobile-view').style.display = 'block';
+            document.getElementById('mobile-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
+        } else {
+            document.getElementById('desktop-view').style.display = 'flex';
+        }
+        
+        render(database, 'discover'); // Initial page load
+    });
+    </script>
+</body>
+</html>
