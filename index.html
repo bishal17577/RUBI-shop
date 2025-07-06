@@ -363,26 +363,159 @@
 
         // --- MOCK APP DATA ---
         const appsData = [
-            { id: 1, logo: 'https://ibb.co/wNsPxWyW', title: 'Krish Bakery', subtitle: 'Cake Coffee and Gift House', category: 'forYou', Open: 'https://bishal17577.github.io/krishbakery/' },
-            { id: 2, logo: 'https://via.placeholder.com/60/33A2FF/FFFFFF?text=CapCut', title: 'CapCut', subtitle: 'Easy-to-use video editor', category: 'forYou', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-            { id: 3, logo: 'https://via.placeholder.com/60/33FF57/FFFFFF?text=Insta', title: 'Instagram', subtitle: 'Social media app', category: 'forYou', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-            { id: 4, logo: 'https://via.placeholder.com/60/FF33A2/FFFFFF?text=Whats', title: 'WhatsApp', subtitle: 'Private Messaging', category: 'forYou', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-            { id: 5, logo: 'https://via.placeholder.com/60/F1C40F/FFFFFF?text=Snap', title: 'Snapchat', subtitle: 'Share the moment', category: 'forYou', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-            { id: 6, logo: 'https://via.placeholder.com/60/9B59B6/FFFFFF?text=Tele', title: 'Telegram', subtitle: 'Fast and secure', category: 'forYou', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-            { id: 7, logo: 'https://via.placeholder.com/60/000000/FFFFFF?text=Krish', title: 'Krishbakery', subtitle: 'Krishbakery Shop APP', rank: 1, category: 'topCharts', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-            { id: 8, logo: 'https://via.placeholder.com/60/E74C3C/FFFFFF?text=Bike', title: 'Biki', subtitle: 'Betting App', rank: 2, category: 'topCharts', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-            { id: 9, logo: 'https://via.placeholder.com/60/3498DB/FFFFFF?text=FB', title: 'Facebook', subtitle: 'Connect with friends', rank: 3, category: 'topCharts', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-            { id: 10, logo: 'https://via.placeholder.com/60/2ECC71/FFFFFF?text=Spotify', title: 'Spotify', subtitle: 'Music and Podcasts', rank: 4, category: 'topCharts', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-            { id: 11, logo: 'https://via.placeholder.com/60/E67E22/FFFFFF?text=X', title: 'X (Twitter)', subtitle: 'Happening now', rank: 5, category: 'topCharts', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-            { id: 12, logo: 'https://via.placeholder.com/60/1ABC9C/FFFFFF?text=Zoom', title: 'Zoom', subtitle: 'Video Conferencing', rank: 6, category: 'topCharts', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-            { id: 13, logo: 'https://via.placeholder.com/60/C0392B/FFFFFF?text=RoYo', title: 'Royo Online Game', subtitle: 'Racing Game', category: 'premium', price: 9.77 },
-            { id: 14, logo: 'https://via.placeholder.com/60/8E44AD/FFFFFF?text=Pro', title: 'Procreate', subtitle: 'Digital art studio', category: 'premium', price: 12.99 },
-            { id: 15, logo: 'https://via.placeholder.com/60/2980B9/FFFFFF?text=Final', title: 'Final Cut Pro', subtitle: 'Pro video editing', category: 'premium', price: 299.99 },
-            { id: 16, logo: 'https://via.placeholder.com/60/27AE60/FFFFFF?text=Mine', title: 'Minecraft', subtitle: 'Build anything', category: 'premium', price: 6.99 },
-            { id: 17, logo: 'https://via.placeholder.com/60/D35400/FFFFFF?text=A+', title: 'A+ Premium Study App', subtitle: 'Premium Study App', category: 'premium', price: 4.99 },
-            { id: 18, logo: 'https://via.placeholder.com/60/7F8C8D/FFFFFF?text=Tasker', title: 'Tasker Pro', subtitle: 'Automation Tool', category: 'premium', price: 3.49 },
+            // The property 'logo' has been changed to 'imageSrc' in all objects.
+
+            {
+                id: 1,
+                imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', 
+                title: 'Krish Bakery',
+                subtitle: 'Cake Coffee and Gift House',
+                category: 'forYou',
+                downloadLink: 'https://bishal17577.github.io/krishbakery/'
+            },
+            {
+                id: 2,
+                imageSrc: 'https://i.ibb.co/5G3t7vG/Cap-Cut-Logo-wine.png', // <-- FIXED: Direct image link
+                title: 'CapCut',
+                subtitle: 'Easy-to-use video editor',
+                category: 'forYou',
+                downloadLink: '...'
+            },
+            {
+                id: 3,
+                imageSrc: 'https://i.ibb.co/j3YjY5C/instagram-logo.png',
+                title: 'Instagram',
+                subtitle: 'Social media app',
+                category: 'forYou',
+                downloadLink: '...'
+            },
+            {
+                id: 4,
+                imageSrc: 'https://i.ibb.co/99M3bXpg/images.jpg',
+                title: 'WhatsApp',
+                subtitle: 'Private Messaging',
+                category: 'forYou',
+                downloadLink: '...'
+            },
+            {
+                id: 5,
+                imageSrc: 'https://via.placeholder.com/60/F1C40F/FFFFFF?text=Snap',
+                title: 'Snapchat',
+                subtitle: 'Share the moment',
+                category: 'forYou',
+                downloadLink: '...'
+            },
+            {
+                id: 6,
+                imageSrc: 'https://i.ibb.co/37r8YqP/telegram-logo.png',
+                title: 'Telegram',
+                subtitle: 'Fast and secure',
+                category: 'forYou',
+                downloadLink: '...'
+            },
+            {
+                id: 7,
+                imageSrc: 'https://i.ibb.co/4WH7b0G/photo-2024-05-18-18-50-24.jpg',
+                title: 'Krishbakery',
+                subtitle: 'Krishbakery Shop APP',
+                rank: 1,
+                category: 'topCharts',
+                downloadLink: '...'
+            },
+            {
+                id: 8,
+                imageSrc: 'https://via.placeholder.com/60/E74C3C/FFFFFF?text=Bike',
+                title: 'Biki',
+                subtitle: 'Betting App',
+                rank: 2,
+                category: 'topCharts',
+                downloadLink: '...'
+            },
+            {
+                id: 9,
+                imageSrc: 'https://via.placeholder.com/60/3498DB/FFFFFF?text=FB',
+                title: 'Facebook',
+                subtitle: 'Connect with friends',
+                rank: 3,
+                category: 'topCharts',
+                downloadLink: '...'
+            },
+            {
+                id: 10,
+                imageSrc: 'https://via.placeholder.com/60/2ECC71/FFFFFF?text=Spotify',
+                title: 'Spotify',
+                subtitle: 'Music and Podcasts',
+                rank: 4,
+                category: 'topCharts',
+                downloadLink: '...'
+            },
+            {
+                id: 11,
+                imageSrc: 'https://via.placeholder.com/60/E67E22/FFFFFF?text=X',
+                title: 'X (Twitter)',
+                subtitle: 'Happening now',
+                rank: 5,
+                category: 'topCharts',
+                downloadLink: '...'
+            },
+            {
+                id: 12,
+                imageSrc: 'https://via.placeholder.com/60/1ABC9C/FFFFFF?text=Zoom',
+                title: 'Zoom',
+                subtitle: 'Video Conferencing',
+                rank: 6,
+                category: 'topCharts',
+                downloadLink: '...'
+            },
+            {
+                id: 13,
+                imageSrc: 'https://via.placeholder.com/60/C0392B/FFFFFF?text=RoYo',
+                title: 'Royo Online Game',
+                subtitle: 'Racing Game',
+                category: 'premium',
+                price: 9.77
+            },
+            {
+                id: 14,
+                imageSrc: 'https://via.placeholder.com/60/8E44AD/FFFFFF?text=Pro',
+                title: 'Procreate',
+                subtitle: 'Digital art studio',
+                category: 'premium',
+                price: 12.99
+            },
+            {
+                id: 15,
+                imageSrc: 'https://via.placeholder.com/60/2980B9/FFFFFF?text=Final',
+                title: 'Final Cut Pro',
+                subtitle: 'Pro video editing',
+                category: 'premium',
+                price: 299.99
+            },
+            {
+                id: 16,
+                imageSrc: 'https://via.placeholder.com/60/27AE60/FFFFFF?text=Mine',
+                title: 'Minecraft',
+                subtitle: 'Build anything',
+                category: 'premium',
+                price: 6.99
+            },
+            {
+                id: 17,
+                imageSrc: 'https://via.placeholder.com/60/D35400/FFFFFF?text=A+',
+                title: 'A+ Premium Study App',
+                subtitle: 'Premium Study App',
+                category: 'premium',
+                price: 4.99
+            },
+            {
+                id: 18,
+                imageSrc: 'https://via.placeholder.com/60/7F8C8D/FFFFFF?text=Tasker',
+                title: 'Tasker Pro',
+                subtitle: 'Automation Tool',
+                category: 'premium',
+                price: 3.49
+            },
         ];
-        
         let favoritedAppIds = new Set();
         
         // --- DOM Elements ---
@@ -416,8 +549,10 @@
             appDiv.className = 'app-item';
             appDiv.dataset.id = app.id;
 
+            // ***** MAJOR FIX HERE *****
+            // Changed app.logo to app.imageSrc to match your data object
             appDiv.innerHTML = `
-                <img src="${app.logo}" alt="${app.title} Logo" class="app-logo">
+                <img src="${app.imageSrc}" alt="${app.title} Logo" class="app-logo"> 
                 <div class="app-details">
                     <p class="app-title">${app.title}</p>
                     <p class="app-subtitle">${app.subtitle}</p>
@@ -498,7 +633,7 @@
         searchBar.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase().trim();
             const filteredApps = appsData.filter(app => 
-                app.title.toLowerCase().includes(searchTerm)
+                app.title.toLowerCase().includes(searchTerm) || app.subtitle.toLowerCase().includes(searchTerm)
             );
             renderApps(filteredApps);
         });
@@ -540,29 +675,25 @@
                 const title = downloadButton.dataset.title;
 
                 if (type === 'paid') {
-                    // MODIFIED LOGIC: Check profile and send WhatsApp message
                     const username = localStorage.getItem('username');
                     const phone = localStorage.getItem('phone');
                     const address = localStorage.getItem('address');
 
-                    // 1. Check if all required profile details are filled out
                     if (!username || !phone || !address) {
                         alert("Please complete your profile (username, phone, and address) before purchasing an app.\n\nClick the profile icon in the top-right corner to update your details.");
-                        return; // Stop the process if details are missing
+                        return;
                     }
 
-                    // 2. If profile is complete, create the pre-filled WhatsApp message
                     const message = `Hello, I would like to purchase the app "${title}" for $${price}.\n\nMy Details:\nUsername: ${username}\nPhone: ${phone}\nAddress: ${address}\n\nPlease send payment instructions. Thank you.`;
-                    
-                    // 3. Construct the WhatsApp URL
                     const whatsappUrl = `https://wa.me/${WHATSAPP_PAYMENT_NUMBER}?text=${encodeURIComponent(message)}`;
-                    
-                    // 4. Open the URL in a new tab to launch WhatsApp
                     window.open(whatsappUrl, '_blank');
 
                 } else {
-                    // Original logic for free apps
-                    window.open(link, '_blank');
+                    if (link && link !== '...') {
+                        window.open(link, '_blank');
+                    } else {
+                        alert('Download link for this app is not available yet.');
+                    }
                 }
             }
         });
@@ -616,15 +747,13 @@
         profileForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // This check prevents sending the form if the key is not set.
             if (WEB3FORMS_ACCESS_KEY === "YOUR_ACCESS_KEY_HERE") { 
                 formResult.style.color = 'red'; 
                 formResult.textContent = "Error: Please set your Web3Forms access key in the script."; 
-                return; // Stop execution here
+                return; 
             }
             
             formResult.textContent = "Submitting...";
-            // We must update the hidden access key field in the form before submitting
             profileForm.querySelector("input[name=access_key]").value = WEB3FORMS_ACCESS_KEY;
             
             const formData = new FormData(profileForm);
@@ -634,15 +763,13 @@
                 const response = await fetch("https://api.web3forms.com/submit", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: json });
                 const result = await response.json();
                 
-                // Only if the email was sent successfully...
                 if (result.success) {
                     formResult.style.color = 'green'; 
                     formResult.textContent = "Profile updated and submitted successfully!";
-                    // ...then we save the data locally.
                     localStorage.setItem('username', document.getElementById('username').value); 
                     localStorage.setItem('phone', document.getElementById('phone').value); 
                     localStorage.setItem('address', document.getElementById('address').value);
-                    loadProfileFromStorage(); // And update the display
+                    loadProfileFromStorage(); 
                 } else { 
                     formResult.style.color = 'red'; 
                     formResult.textContent = result.message || "An error occurred."; 
