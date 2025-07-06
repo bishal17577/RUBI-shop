@@ -301,12 +301,187 @@
         </div>
 
         <!-- Work Page -->
-        <div id="work-page" class="main-panel">
-            <div class="placeholder-content">
-                <h2>Work</h2>
-                <p>Work-related apps and content will be shown here.</p>
+        <style>
+            #work-page {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 16px;
+              padding: 16px;
+              background: #f0f2f5;
+              font-family: Arial, sans-serif;
+            }
+          
+            .post-card {
+              background: #fff;
+              border-radius: 8px;
+              padding: 12px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+              flex: 1 1 calc(50% - 16px);
+              box-sizing: border-box;
+              position: relative;
+            }
+          
+            @media (max-width: 768px) {
+              .post-card {
+                flex: 1 1 100%;
+              }
+            }
+          
+            .post-image {
+              width: 100%;
+              border-radius: 5px;
+              margin-top: 10px;
+              cursor: pointer;
+              transition: transform 0.3s ease;
+            }
+          
+            /* zoom overlay */
+            .zoom-overlay {
+              position: fixed;
+              top:0; left:0; right:0; bottom:0;
+              background: rgba(0,0,0,0.8);
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              z-index: 9999;
+              display: none;
+            }
+          
+            .zoom-overlay img {
+              max-width: 90%;
+              max-height: 90%;
+            }
+          
+            .action-buttons button {
+              border: none;
+              background: none;
+              cursor: pointer;
+              padding: 5px 10px;
+              font-size: 14px;
+            }
+          </style>
+          
+          <div id="work-page">
+          
+            <div class="post-card">
+              <div style="display: flex; align-items: center;">
+                <img src="https://i.ibb.co/Jj524zmb/edited-image.png" alt="Profile" style="width:40px; height:40px; border-radius:50%; margin-right:10px;">
+                <div>
+                  <strong>Bishal Shrestha</strong><br>
+                  <span style="font-size:12px; color:gray;">sun 6 july </span>
+                </div>
+              </div>
+              <div style="margin-top:10px;">
+                I am verry Happy now
+              </div>
+              <img src="https://i.ibb.co/MyZkTB0S/IMG-20241206-112150-7.jpg" class="post-image" alt="post" data-download="https://i.ibb.co/MyZkTB0S/IMG-20241206-112150-7.jpg">
+              <div style="margin-top:10px; border-top:1px solid #ddd; border-bottom:1px solid #ddd; padding:5px 0;">
+                😍Subscribe Vx Xtha on youtube
+              </div>
+              <div class="action-buttons" style="display:flex; justify-content:space-around; margin-top:5px;">
+                <button class="download-btn">⬇️ Download</button>
+                <button class="whatsapp-btn">💬 WhatsApp</button>
+                <button class="share-btn">🔗 Share</button>
+              </div>
             </div>
-        </div>
+          
+          </div>
+          
+          <!-- zoom overlay -->
+          <div class="zoom-overlay" id="zoomOverlay">
+            <img src=" " id="zoomedImage">
+          </div>
+          
+          <script>
+            // zoom on click
+            document.querySelectorAll(".post-image").forEach(img => {
+              img.addEventListener("click", () => {
+                document.getElementById("zoomedImage").src = img.src;
+                document.getElementById("zoomOverlay").style.display = "flex";
+              });
+            });
+            document.getElementById("zoomOverlay").addEventListener("click", () => {
+              document.getElementById("zoomOverlay").style.display = "none";
+            });
+          
+            // download
+document.querySelectorAll(".download-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const img = btn.closest(".post-card").querySelector(".post-image");
+    if (!img) return;
+    
+    // create canvas to convert to PNG
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const image = new Image();
+    image.crossOrigin = "anonymous"; // allow cross-origin images if hosted publicly
+    image.src = img.src;
+    
+    image.onload = () => {
+      canvas.width = image.width;
+      canvas.height = image.height;
+      ctx.drawImage(image, 0, 0);
+      // convert to PNG
+      const pngDataUrl = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = pngDataUrl;
+      link.download = "post-image.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+  });
+});
+
+          
+            // WhatsApp button
+document.querySelectorAll(".whatsapp-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const postCard = btn.closest(".post-card");
+    
+    if (!postCard) return; // safety
+    
+    const img = postCard.querySelector(".post-image");
+    const userName = postCard.querySelector("strong")?.innerText || "Unknown";
+    
+    // get the text content of the third child div:
+    const allDivs = postCard.querySelectorAll("div");
+    let postText = "";
+    if (allDivs.length >= 3) {
+      postText = allDivs[2].innerText;
+    }
+
+    const imgName = img?.dataset.download || img?.src.split("/").pop() || "image.jpg";
+    
+    const message = `Post Details:
+-------------------
+👤 Name: ${userName}
+📝 Message: ${postText}
+🖼️ Photo: ${imgName}
+-------------------
+`;
+    const encoded = encodeURIComponent(message);
+    window.open(`https://wa.me/9761614027?text=${encoded}`, "_blank");
+  });
+});
+
+          
+            // Share
+            document.querySelectorAll(".share-btn").forEach(btn => {
+              btn.addEventListener("click", () => {
+                if (navigator.share) {
+                  navigator.share({
+                    title: "Check this post",
+                    text: "See this cool post",
+                    url: window.location.href
+                  });
+                } else {
+                  alert("Share not supported in this browser");
+                }
+              });
+            });
+          </script>
+          
 
         <!-- Notifications Page -->
         <div id="notifications-page" class="main-panel">
@@ -321,9 +496,9 @@
     <nav class="bottom-nav" id="bottom-nav">
         <a href="#" class="nav-item active" data-page="apps-page"><i class="fas fa-th-large"></i><span>Apps</span></a>
         <a href="#" class="nav-item" data-page="favorites-page"><i class="far fa-heart"></i><span>Favorites</span></a>
-        <a href="#" class="nav-item" data-page="games-page"><i class="fas fa-gamepad"></i><span>Games</span></a>
+     
         <a href="#" class="nav-item" data-page="work-page"><i class="fas fa-briefcase"></i><span>Work</span></a>
-        <a href="#" class="nav-item" data-page="notifications-page"><i class="far fa-bell"></i><span>Notifications</span></a>
+ 
     </nav>
     
     <!-- Profile Modal -->
@@ -375,146 +550,30 @@
             },
             {
                 id: 2,
-                imageSrc: 'https://i.ibb.co/5G3t7vG/Cap-Cut-Logo-wine.png', // <-- FIXED: Direct image link
-                title: 'CapCut',
-                subtitle: 'Easy-to-use video editor',
+                imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', // <-- FIXED: Direct image link
+                title: 'Chapakhana',
+                subtitle: 'Online Press Store',
                 category: 'forYou',
-                downloadLink: '...'
+                downloadLink: 'https://bishal17577.github.io/chapakhana/'
             },
             {
                 id: 3,
-                imageSrc: 'https://i.ibb.co/j3YjY5C/instagram-logo.png',
-                title: 'Instagram',
-                subtitle: 'Social media app',
-                category: 'forYou',
-                downloadLink: '...'
+                imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg',
+                title: 'Digital Bill',
+                subtitle: 'Online Bill Maker for shop',
+                category: 'premium',
+                price: 400
             },
             {
                 id: 4,
-                imageSrc: 'https://i.ibb.co/99M3bXpg/images.jpg',
-                title: 'WhatsApp',
-                subtitle: 'Private Messaging',
-                category: 'forYou',
-                downloadLink: '...'
-            },
-            {
-                id: 5,
-                imageSrc: 'https://via.placeholder.com/60/F1C40F/FFFFFF?text=Snap',
-                title: 'Snapchat',
-                subtitle: 'Share the moment',
-                category: 'forYou',
-                downloadLink: '...'
-            },
-            {
-                id: 6,
-                imageSrc: 'https://i.ibb.co/37r8YqP/telegram-logo.png',
-                title: 'Telegram',
-                subtitle: 'Fast and secure',
-                category: 'forYou',
-                downloadLink: '...'
-            },
-            {
-                id: 7,
-                imageSrc: 'https://i.ibb.co/4WH7b0G/photo-2024-05-18-18-50-24.jpg',
-                title: 'Krishbakery',
-                subtitle: 'Krishbakery Shop APP',
+                imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg',
+                title: 'Digital Bill',
+                subtitle: 'Online Bill Maker for shop',
                 rank: 1,
                 category: 'topCharts',
-                downloadLink: '...'
+                price: 400
             },
-            {
-                id: 8,
-                imageSrc: 'https://via.placeholder.com/60/E74C3C/FFFFFF?text=Bike',
-                title: 'Biki',
-                subtitle: 'Betting App',
-                rank: 2,
-                category: 'topCharts',
-                downloadLink: '...'
-            },
-            {
-                id: 9,
-                imageSrc: 'https://via.placeholder.com/60/3498DB/FFFFFF?text=FB',
-                title: 'Facebook',
-                subtitle: 'Connect with friends',
-                rank: 3,
-                category: 'topCharts',
-                downloadLink: '...'
-            },
-            {
-                id: 10,
-                imageSrc: 'https://via.placeholder.com/60/2ECC71/FFFFFF?text=Spotify',
-                title: 'Spotify',
-                subtitle: 'Music and Podcasts',
-                rank: 4,
-                category: 'topCharts',
-                downloadLink: '...'
-            },
-            {
-                id: 11,
-                imageSrc: 'https://via.placeholder.com/60/E67E22/FFFFFF?text=X',
-                title: 'X (Twitter)',
-                subtitle: 'Happening now',
-                rank: 5,
-                category: 'topCharts',
-                downloadLink: '...'
-            },
-            {
-                id: 12,
-                imageSrc: 'https://via.placeholder.com/60/1ABC9C/FFFFFF?text=Zoom',
-                title: 'Zoom',
-                subtitle: 'Video Conferencing',
-                rank: 6,
-                category: 'topCharts',
-                downloadLink: '...'
-            },
-            {
-                id: 13,
-                imageSrc: 'https://via.placeholder.com/60/C0392B/FFFFFF?text=RoYo',
-                title: 'Royo Online Game',
-                subtitle: 'Racing Game',
-                category: 'premium',
-                price: 9.77
-            },
-            {
-                id: 14,
-                imageSrc: 'https://via.placeholder.com/60/8E44AD/FFFFFF?text=Pro',
-                title: 'Procreate',
-                subtitle: 'Digital art studio',
-                category: 'premium',
-                price: 12.99
-            },
-            {
-                id: 15,
-                imageSrc: 'https://via.placeholder.com/60/2980B9/FFFFFF?text=Final',
-                title: 'Final Cut Pro',
-                subtitle: 'Pro video editing',
-                category: 'premium',
-                price: 299.99
-            },
-            {
-                id: 16,
-                imageSrc: 'https://via.placeholder.com/60/27AE60/FFFFFF?text=Mine',
-                title: 'Minecraft',
-                subtitle: 'Build anything',
-                category: 'premium',
-                price: 6.99
-            },
-            {
-                id: 17,
-                imageSrc: 'https://via.placeholder.com/60/D35400/FFFFFF?text=A+',
-                title: 'A+ Premium Study App',
-                subtitle: 'Premium Study App',
-                category: 'premium',
-                price: 4.99
-            },
-            {
-                id: 18,
-                imageSrc: 'https://via.placeholder.com/60/7F8C8D/FFFFFF?text=Tasker',
-                title: 'Tasker Pro',
-                subtitle: 'Automation Tool',
-                category: 'premium',
-                price: 3.49
-            },
+            
         ];
         let favoritedAppIds = new Set();
         
@@ -543,7 +602,7 @@
             const isPaid = app.price !== undefined;
             const isFavorited = favoritedAppIds.has(app.id);
             const buttonClass = isPaid ? 'paid' : 'free';
-            const buttonText = isPaid ? `$${app.price}` : 'Download';
+            const buttonText = isPaid ? `Rs${app.price}` : 'Download';
 
             const appDiv = document.createElement('div');
             appDiv.className = 'app-item';
