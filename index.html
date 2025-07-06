@@ -3,254 +3,680 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rubi Shop</title>
+    <title>Web App Store</title>
+    <!-- Using Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* --- 0. GLOBAL STYLES & MODERN SETUP --- */
+        /* --- GLOBAL STYLES --- */
         :root {
-            --app-blue: #0A84FF; --background-dark: #121212; --card-dark: rgba(30, 30, 30, 0.7);
-            --card-border: rgba(255, 255, 255, 0.1); --text-primary-dark: #FFFFFF; --text-secondary-dark: #a1a1a6;
-            --button-get-bg: var(--app-blue); --button-get-text: #FFFFFF; --button-open-bg: #3a3a3c; --button-open-text: #FFFFFF;
+            --primary-color: #007bff;
+            --light-gray: #f0f2f5;
+            --dark-gray: #65676b;
+            --border-color: #ced0d4;
         }
-        @supports (backdrop-filter: blur(20px)) { :root { --card-dark: rgba(44, 44, 46, 0.75); } }
 
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif; background-color: var(--background-dark); color: var(--text-primary-dark); -webkit-font-smoothing: antialiased; }
-        .page-view { display: none; }
-        .action-button { font-weight: bold; padding: 8px 25px; border-radius: 999px; text-decoration: none; font-size: 14px; border: none; cursor: pointer; transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.2s; }
-        .action-button:hover { transform: scale(1.05); } .action-button:active { transform: scale(0.98); }
-        .get-button { background-color: var(--button-get-bg); color: var(--button-get-text); }
-        .open-button { background-color: var(--button-open-bg); color: var(--button-open-text); }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            background-color: var(--light-gray);
+            padding-top: 60px; /* Space for fixed header */
+            padding-bottom: 70px; /* Space for fixed bottom nav */
+        }
 
-        /* --- 1. DESKTOP VIEW STYLES --- */
-        #desktop-view { display: flex; height: 100vh; overflow: hidden; }
-        .desktop-sidebar { width: 240px; background-color: #1c1c1e; padding: 20px; flex-shrink: 0; display: flex; flex-direction: column; border-right: 1px solid var(--card-border); }
-        .desktop-sidebar h1 { font-size: 24px; margin: 20px 0; font-weight: 700; }
-        .desktop-sidebar .search-box { width: 100%; padding: 10px 14px; border-radius: 10px; border: none; background-color: #3a3a3c; font-size: 14px; margin-bottom: 20px; box-sizing: border-box; color: var(--text-primary-dark); }
-        .desktop-sidebar .nav-item { padding: 10px 12px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: background-color 0.2s; }
-        .desktop-sidebar .nav-item:hover { background-color: rgba(255,255,255,0.05); } .desktop-sidebar .nav-item.active { background-color: var(--app-blue); color: white; }
-        .desktop-content { flex-grow: 1; overflow-y: auto; padding: 40px; }
-        .desktop-section h2 { font-size: 24px; font-weight: 700; margin: 40px 0 20px 0; }
-        .hero-card { border-radius: 24px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 30px; }
-        .hero-card .banner { height: 350px; background-size: cover; background-position: center; position: relative; }
-        .hero-card .banner .overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 30px; color: white; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); }
-        .hero-card .overlay-subtitle { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #a9d8ff; }
-        .hero-card .overlay-title { font-size: 32px; font-weight: bold; margin: 4px 0; }
-        .app-carousel { display: flex; flex-direction: column; gap: 10px; }
-        .app-carousel-item { display: flex; align-items: center; gap: 15px; padding: 15px; background-color: var(--card-dark); border: 1px solid var(--card-border); border-radius: 16px; backdrop-filter: blur(20px); }
-        .app-carousel-item .icon { width: 60px; height: 60px; border-radius: 12px; flex-shrink: 0; }
-        .app-carousel-item .details { flex-grow: 1; } .app-carousel-item .name { font-weight: 600; font-size: 16px; margin: 0 0 4px; }
-        .app-carousel-item .category { color: var(--text-secondary-dark); font-size: 14px; margin: 0; }
-        .my-apps-grid { display: grid; gap: 20px; } .my-apps-grid .app-icon-item { text-align: center; }
-        #mac-home { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
-        #mac-home .app-icon-item .icon { width: 80px; height: 80px; border-radius: 20px; margin-bottom: 8px; }
-        #mac-home .app-icon-item .name { font-size: 13px; font-weight: 500; }
-        #windows-home { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-        #windows-home .app-icon-item { display: flex; align-items: center; gap: 10px; padding: 10px; background-color: #2b2b2b; border-radius: 6px; }
-        #windows-home .app-icon-item .icon { width: 40px; height: 40px; border-radius: 6px; }
-        #windows-home .app-icon-item .name { font-size: 14px; font-weight: 600; }
+        /* --- HEADER --- */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
 
-        /* --- 2. MOBILE VIEW STYLES --- */
-        #mobile-view { width: 100%; } .mobile-header { padding: 16px; }
-        .mobile-header h1 { font-size: 34px; font-weight: 700; margin: 0; }
-        .mobile-header p { color: var(--text-secondary-dark); font-weight: 600; margin: 0; text-transform: uppercase; }
-        #mobile-search-box { display: block; width: calc(100% - 32px); margin: 0 16px 16px; padding: 12px 16px; font-size: 16px; border: none; background-color: #3a3a3c; border-radius: 10px; box-sizing: border-box; color: var(--text-primary-dark); }
-        .mobile-content-area { padding: 0 16px 32px; display: flex; flex-direction: column; gap: 24px; }
-        .mobile-card { border-radius: 20px; overflow: hidden; background-color: var(--card-dark); backdrop-filter: blur(30px); border: 1px solid var(--card-border); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-        .mobile-card .banner { height: 300px; background-size: cover; background-position: center; position: relative; }
-        .mobile-card .banner .overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; color: white; background: linear-gradient(to top, rgba(0,0,0,0.85) 30%, transparent); }
-        .mobile-card .overlay .subtitle { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; }
-        .mobile-card .overlay .title { font-size: 28px; font-weight: 700; margin: 4px 0; }
-        .mobile-card .app-info { display: flex; align-items: center; gap: 12px; padding: 16px; }
-        .mobile-card .app-info .icon { width: 50px; height: 50px; border-radius: 12px; flex-shrink: 0; }
-        .mobile-card .app-info .details { flex-grow: 1; }
-        .mobile-card .app-info .name { font-weight: 600; font-size: 16px; margin: 0 0 2px; }
-        .mobile-card .app-info .category { color: var(--text-secondary-dark); font-size: 14px; margin: 0; }
-        .mobile-card .app-info .in-app { font-size: 10px; color: var(--text-secondary-dark); display: block; text-align: center; margin-top: 4px; }
-        .mobile-home-screen { padding: 16px; background-color: transparent; }
-        .mobile-home-screen h2 { font-size: 22px; margin: 0 0 15px 0; font-weight: 700; }
-        .mobile-home-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; text-align: center; }
-        .mobile-home-grid .app-icon-item .icon { width: 60px; height: 60px; border-radius: 15px; margin-bottom: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .mobile-home-grid .app-icon-item .name { font-size: 12px; font-weight: 500; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .header .logo {
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .header .search-bar {
+            flex-grow: 1;
+            margin: 0 15px;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background-color: var(--light-gray);
+        }
+
+        .header .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden; /* To contain the profile pic */
+        }
+
+        .header .profile-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
         
-        /* --- 3. APP DETAIL VIEW STYLES (NEW) --- */
-        #app-detail-view {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--background-dark); z-index: 1000; overflow-y: auto;
-            opacity: 0; transform: scale(1.05); pointer-events: none;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+        .header .profile-icon i {
+            font-size: 20px;
+            color: var(--dark-gray);
         }
-        #app-detail-view.visible { opacity: 1; transform: scale(1); pointer-events: auto; }
-        .detail-content { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .detail-back-button {
-            position: absolute; top: 20px; right: 20px; width: 40px; height: 40px;
-            background: rgba(0,0,0,0.5); border-radius: 50%; border: none; cursor: pointer;
-            color: white; font-size: 20px; line-height: 40px; text-align: center;
+
+        /* --- MAIN PAGE CONTAINER --- */
+        main {
+            padding-bottom: 10px; /* spacing */
         }
-        .detail-banner { width: 100%; height: 350px; background-size: cover; background-position: center; border-radius: 20px; }
-        .detail-header { display: flex; align-items: center; gap: 20px; margin-top: -50px; padding: 0 30px; }
-        .detail-header .icon { width: 120px; height: 120px; border-radius: 24px; border: 4px solid var(--background-dark); flex-shrink: 0; }
-        .detail-header .info { flex-grow: 1; }
-        .detail-header .name { font-size: 28px; font-weight: 700; margin: 0 0 4px; }
-        .detail-header .developer { color: var(--text-secondary-dark); }
-        .detail-section { margin-top: 30px; padding: 0 10px; }
-        .detail-section h2 { font-size: 22px; font-weight: 600; border-bottom: 1px solid var(--separator-dark); padding-bottom: 10px; margin-bottom: 15px; }
-        .detail-description { line-height: 1.7; color: var(--text-secondary-dark); }
-        .screenshot-gallery { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; }
-        .screenshot-gallery img { height: 250px; border-radius: 12px; }
+
+        .main-panel {
+            display: none;
+        }
+
+        .main-panel.active {
+            display: block;
+        }
+        
+        /* Placeholder for new pages */
+        .placeholder-content {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--dark-gray);
+        }
+
+        /* --- CONTENT TABS (for Apps page) --- */
+        .content-tabs {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            background-color: white;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-tabs button {
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--dark-gray);
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .content-tabs button.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        /* --- APP LIST --- */
+        .app-list-panel {
+            display: none;
+            padding: 0 10px;
+        }
+        
+        .app-list-panel.active {
+            display: block;
+        }
+        
+        .app-list-panel .no-results {
+             padding: 40px 20px;
+            text-align: center;
+            color: var(--dark-gray);
+        }
+
+        .app-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background-color: white;
+            margin: 10px 0;
+            border-radius: 12px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .app-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .app-details {
+            flex-grow: 1;
+        }
+        
+        .app-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .app-subtitle {
+            font-size: 14px;
+            color: var(--dark-gray);
+            margin: 2px 0 0;
+        }
+
+        .app-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .download-button {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            background-color: var(--primary-color);
+            font-size: 14px;
+        }
+        
+        .download-button.paid {
+            background-color: #28a745; /* Green for paid */
+        }
+        
+        .fav-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #ccc;
+        }
+
+        .fav-button.favorited {
+            color: #e53935; /* Red when favorited */
+        }
+        
+        /* --- BOTTOM NAVIGATION --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            background-color: white;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            padding: 5px 0;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--dark-gray);
+            text-decoration: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .nav-item i {
+            font-size: 22px;
+        }
+        
+        .nav-item span {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        /* --- PROFILE MODAL --- */
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: #fefefe; margin: 20% auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative; }
+        .modal .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .modal-content h2 { margin-top: 0; }
+        .modal-content .profile-display { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+        .modal-content .profile-pic-container { width: 80px; height: 80px; border-radius: 50%; background: #eee; position: relative; cursor: pointer; overflow: hidden; }
+        .profile-pic-container #profile-pic-display { width: 100%; height: 100%; object-fit: cover; }
+        .profile-pic-container .overlay { position: absolute; bottom: 0; background: rgba(0,0,0,0.5); color: white; width: 100%; text-align: center; font-size: 12px; padding: 4px 0; }
+        #profile-pic-input { display: none; }
+        .profile-info p { margin: 4px 0; font-size: 14px; }
+        .profile-info strong { color: #333; }
+        .modal-content form { display: flex; flex-direction: column; gap: 15px; }
+        .modal-content input[type="text"], .modal-content input[type="tel"] { padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 16px; }
+        .modal-content button.save-btn { padding: 12px; font-size: 16px; background-color: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="desktop-view" class="page-view">
-        <aside class="desktop-sidebar">
-            <h1>Rubi Shop</h1>
-            <input type="search" id="desktop-search-box" class="search-box" placeholder="Search...">
-            <nav id="desktop-nav">
-                <div class="nav-item active" data-section="discover">Discover</div>
-                <div class="nav-item" data-section="my-apps">My Apps</div>
-            </nav>
-        </aside>
-        <main id="desktop-content-area" class="desktop-content"></main>
-    </div>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">Store</div>
+        <input type="search" class="search-bar" placeholder="Search apps & games...">
+        <div class="profile-icon" id="profile-icon">
+            <img id="header-profile-pic" src=" " style="display: none;">
+            <i id="header-profile-icon-default" class="fa-regular fa-user"></i>
+        </div>
+    </header>
 
-    <div id="mobile-view" class="page-view">
-        <header class="mobile-header">
-            <p id="mobile-date">Thursday 3 July</p>
-            <h1>Today</h1>
-        </header>
-        <input type="search" id="mobile-search-box" placeholder="Search Apps & Games...">
-        <div id="mobile-content-area" class="mobile-content-area"></div>
-    </div>
+    <!-- Main Content -->
+    <main>
+        <!-- Apps Page (Default) -->
+        <div id="apps-page" class="main-panel active">
+            <nav class="content-tabs" id="content-tabs">
+                <button class="tab-button active" data-tab="forYou">For You</button>
+                <button class="tab-button" data-tab="topCharts">Top Charts</button>
+                <button class="tab-button" data-tab="premium">Premium</button>
+            </nav>
+            <div id="forYou" class="app-list-panel active"></div>
+            <div id="topCharts" class="app-list-panel"></div>
+            <div id="premium" class="app-list-panel"></div>
+        </div>
+
+        <!-- Favorites Page -->
+        <div id="favorites-page" class="main-panel">
+            <div class="placeholder-content" id="favorites-placeholder">
+                <h2>Favorites</h2>
+                <p>Your favorite apps will appear here.</p>
+            </div>
+        </div>
+        
+        <!-- Games Page -->
+        <div id="games-page" class="main-panel">
+             <div class="placeholder-content">
+                <h2>Games</h2>
+                <p>Games content will be shown here.</p>
+            </div>
+        </div>
+
+        <!-- Work Page -->
+        <div id="work-page" class="main-panel">
+            <div class="placeholder-content">
+                <h2>Work</h2>
+                <p>Work-related apps and content will be shown here.</p>
+            </div>
+        </div>
+
+        <!-- Notifications Page -->
+        <div id="notifications-page" class="main-panel">
+            <div class="placeholder-content">
+                <h2>Notifications</h2>
+                <p>You have no new notifications.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav" id="bottom-nav">
+        <a href="#" class="nav-item active" data-page="apps-page"><i class="fas fa-th-large"></i><span>Apps</span></a>
+        <a href="#" class="nav-item" data-page="favorites-page"><i class="far fa-heart"></i><span>Favorites</span></a>
+        <a href="#" class="nav-item" data-page="games-page"><i class="fas fa-gamepad"></i><span>Games</span></a>
+        <a href="#" class="nav-item" data-page="work-page"><i class="fas fa-briefcase"></i><span>Work</span></a>
+        <a href="#" class="nav-item" data-page="notifications-page"><i class="far fa-bell"></i><span>Notifications</span></a>
+    </nav>
     
-    <!-- App Detail View (Initially Hidden) -->
-    <div id="app-detail-view" class="page-view"></div>
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="modal-close">×</span>
+            <h2>My Profile & Settings</h2>
+            <div class="profile-display">
+                <div class="profile-pic-container" id="profile-pic-changer">
+                    <img id="profile-pic-display" src=" "><input type="file" id="profile-pic-input" accept="image/*"><div class="overlay">Change</div>
+                </div>
+                <div class="profile-info">
+                    <p><strong>Username:</strong> <span id="username-display">Not Set</span></p>
+                    <p><strong>Phone:</strong> <span id="phone-display">Not Set</span></p>
+                    <p><strong>Address:</strong> <span id="address-display">Not Set</span></p>
+                </div>
+            </div>
+            <form id="profileForm">
+                <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+                <input type="hidden" name="subject" value="New Profile Submission from App Store">
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                <input type="text" id="address" name="address" placeholder="Enter your address" required>
+                <button type="submit" class="save-btn">Save & Update Profile</button>
+            </form>
+            <p id="form-result" style="text-align: center; margin-top: 10px;"></p>
+        </div>
+    </div>
 
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // =======================================================
-        //  1. DATA STORE - NOW WITH DESCRIPTION & SCREENSHOTS
-        // =======================================================
-        const database = [
-            { id: 'rubi01', name: 'Rubi Shop', developer: 'Rubi Inc.', category: 'Shopping & Productivity', icon: 'https://placehold.co/120x120/7e57c2/white?text=Rubi', banner: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=1887&auto=format&fit=crop', type: 'hero', subtitle: 'Editor\'s Choice', downloadUrl: '#', 
-              description: 'Welcome to Rubi Shop, your one-stop destination for the best apps and games. Discover new favorites, get exclusive deals, and manage your library with a seamless, modern interface. Built for performance and designed for you.',
-              screenshots: ['https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1974', 'https://images.unsplash.com/photo-1611162616805-6534443999c2?q=80&w=1974'] },
-            { id: 'KRISH BAKERY', name: 'KRISH BAKERY', developer: 'RUBI XTHA', category: 'SHOP', icon: 'https://placehold.co/120x120/f44336/white?text=AL', banner: 'https://images.unsplash.com/photo-1614294109339-d4d1893a196f?q=80&w=1932', type: 'hero', subtitle: 'CAKE SHOP', downloadUrl: 'https://median.co/share/djdpbl#apk',
-              description: 'KRISH BAKERY COFFEY SHOP AND GIFT HOUSE',
-              screenshots: ['https://placehold.co/500x300/f44336/white?text=Race+Start', 'https://placehold.co/500x300/f44336/white?text=Drift+Corner'] },
-            { id: 'Krish Bakery', name: 'Krish Bakery', developer: 'Rubi XTHA', category: 'Krish Bakery', icon: 'https://placehold.co/120x120/00bcd4/white?text=Px', type: 'app', downloadUrl: 'https://median.co/share/djdpbl#apk',
-              description: 'Krish Bakery',
-              screenshots: ['https://placehold.co/500x300/00bcd4/white?text=Editing+UI', 'https://placehold.co/500x300/00bcd4/white?text=Color+Grading'] }
+        // --- CONFIGURATION ---
+        // IMPORTANT: Replace this with your own key from https://web3forms.com
+        const WEB3FORMS_ACCESS_KEY = "1f9d8d2c-a5f8-471e-a027-6f1a0287cafc"; 
+        // IMPORTANT: The WhatsApp number to send purchase requests to.
+        const WHATSAPP_PAYMENT_NUMBER = "9761614027"; 
+
+        // --- MOCK APP DATA ---
+        const appsData = [
+            { id: 1, logo: 'https://via.placeholder.com/60/FF5733/FFFFFF?text=TikTok', title: 'TikTok', subtitle: 'Videos, Music & Live Streams', category: 'forYou', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { id: 2, logo: 'https://via.placeholder.com/60/33A2FF/FFFFFF?text=CapCut', title: 'CapCut', subtitle: 'Easy-to-use video editor', category: 'forYou', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { id: 3, logo: 'https://via.placeholder.com/60/33FF57/FFFFFF?text=Insta', title: 'Instagram', subtitle: 'Social media app', category: 'forYou', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { id: 4, logo: 'https://via.placeholder.com/60/FF33A2/FFFFFF?text=Whats', title: 'WhatsApp', subtitle: 'Private Messaging', category: 'forYou', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { id: 5, logo: 'https://via.placeholder.com/60/F1C40F/FFFFFF?text=Snap', title: 'Snapchat', subtitle: 'Share the moment', category: 'forYou', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { id: 6, logo: 'https://via.placeholder.com/60/9B59B6/FFFFFF?text=Tele', title: 'Telegram', subtitle: 'Fast and secure', category: 'forYou', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { id: 7, logo: 'https://via.placeholder.com/60/000000/FFFFFF?text=Krish', title: 'Krishbakery', subtitle: 'Krishbakery Shop APP', rank: 1, category: 'topCharts', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { id: 8, logo: 'https://via.placeholder.com/60/E74C3C/FFFFFF?text=Bike', title: 'Biki', subtitle: 'Betting App', rank: 2, category: 'topCharts', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { id: 9, logo: 'https://via.placeholder.com/60/3498DB/FFFFFF?text=FB', title: 'Facebook', subtitle: 'Connect with friends', rank: 3, category: 'topCharts', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { id: 10, logo: 'https://via.placeholder.com/60/2ECC71/FFFFFF?text=Spotify', title: 'Spotify', subtitle: 'Music and Podcasts', rank: 4, category: 'topCharts', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { id: 11, logo: 'https://via.placeholder.com/60/E67E22/FFFFFF?text=X', title: 'X (Twitter)', subtitle: 'Happening now', rank: 5, category: 'topCharts', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { id: 12, logo: 'https://via.placeholder.com/60/1ABC9C/FFFFFF?text=Zoom', title: 'Zoom', subtitle: 'Video Conferencing', rank: 6, category: 'topCharts', downloadLink: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { id: 13, logo: 'https://via.placeholder.com/60/C0392B/FFFFFF?text=RoYo', title: 'Royo Online Game', subtitle: 'Racing Game', category: 'premium', price: 9.77 },
+            { id: 14, logo: 'https://via.placeholder.com/60/8E44AD/FFFFFF?text=Pro', title: 'Procreate', subtitle: 'Digital art studio', category: 'premium', price: 12.99 },
+            { id: 15, logo: 'https://via.placeholder.com/60/2980B9/FFFFFF?text=Final', title: 'Final Cut Pro', subtitle: 'Pro video editing', category: 'premium', price: 299.99 },
+            { id: 16, logo: 'https://via.placeholder.com/60/27AE60/FFFFFF?text=Mine', title: 'Minecraft', subtitle: 'Build anything', category: 'premium', price: 6.99 },
+            { id: 17, logo: 'https://via.placeholder.com/60/D35400/FFFFFF?text=A+', title: 'A+ Premium Study App', subtitle: 'Premium Study App', category: 'premium', price: 4.99 },
+            { id: 18, logo: 'https://via.placeholder.com/60/7F8C8D/FFFFFF?text=Tasker', title: 'Tasker Pro', subtitle: 'Automation Tool', category: 'premium', price: 3.49 },
         ];
         
-        const state = { installedApps: new Set(JSON.parse(localStorage.getItem('rubiShopInstalledApps')) || []), platform: 'unknown' };
-        function saveState() { localStorage.setItem('rubiShopInstalledApps', JSON.stringify(Array.from(state.installedApps))); }
-
-        const desktopContent = document.getElementById('desktop-content-area');
-        const mobileContent = document.getElementById('mobile-content-area');
-        const detailView = document.getElementById('app-detail-view');
-
-        // --- RENDERERS (Unchanged from before, for brevity) ---
-        function render(items, view = 'discover') { /* ... */ }
-        function renderDesktop(items, view) { /* ... */ }
-        function createDesktopHero(item) { /* ... */ }
-        function createDesktopSection(title, items) { /* ... */ }
-        function createDesktopItem(item) { /* ... */ }
-        function createDesktopIcon(item) { /* ... */ }
-        function renderMobile(items, view) { /* ... */ }
-        function createMobileHeroCard(item) { /* ... */ }
-        function createMobileAppCard(item) { /* ... */ }
-        function createMobileAppInfo(item) { /* ... */ }
+        let favoritedAppIds = new Set();
         
-        // --- (Copying the renderer functions from previous answer for completeness)
-        function render(items, view = 'discover') { if (state.platform === 'mobile') { renderMobile(items, view); } else { renderDesktop(items, view); } }
-        function renderDesktop(items, view) { if (view === 'discover') { const h=items.filter(i=>i.type==='hero'), g=items.filter(i=>i.type==='game'), a=items.filter(i=>i.type==='app'); let t=""; h.length>0&&(t+=h.map(createDesktopHero).join("")), a.length>0&&(t+=createDesktopSection("Apps",a)), g.length>0&&(t+=createDesktopSection("Games",g)), desktopContent.innerHTML=t; } else if (view === 'my-apps') { const myApps=database.filter(app=>state.installedApps.has(app.id)); const homeId=state.platform==='windows'?'windows-home':'mac-home'; desktopContent.innerHTML=`<div class="desktop-section"><h2>${state.platform==='windows'?'Pinned Apps':'Applications'}</h2><div id="${homeId}" class="my-apps-grid">${myApps.map(createDesktopIcon).join('')}</div></div>`; } }
-        function createDesktopHero(item) { return `<div class="hero-card"><div class="banner" style="background-image: url('${item.banner}')"><div class="overlay"><div class="overlay-subtitle">${item.subtitle || ''}</div><div class="overlay-title">${item.name}</div></div></div></div>`; }
-        function createDesktopSection(title, items) { return `<div class="desktop-section"><h2>${title}</h2><div class="app-carousel">${items.map(createDesktopItem).join('')}</div></div>`; }
-        function createDesktopItem(item) { const i=state.installedApps.has(item.id); return `<div class="app-carousel-item"><img src="${item.icon}" alt="${item.name}" class="icon"><div class="details"><h3 class="name">${item.name}</h3><p class="category">${item.category}</p></div><button class="action-button ${i?'open-button':'get-button'}" data-id="${item.id}" data-url="${item.downloadUrl}">${i?'OPEN':'GET'}</button></div>`; }
-        function createDesktopIcon(item) { return `<div class="app-icon-item"><img src="${item.icon}" class="icon"><div class="name">${item.name}</div></div>`; }
-        function renderMobile(items, view) { const myApps=database.filter(app=>state.installedApps.has(app.id)); let myAppsHtml=""; myApps.length>0&&(myAppsHtml=`<div class="mobile-home-screen"><h2>Home Screen</h2><div class="mobile-home-grid">${myApps.map(createDesktopIcon).join('')}</div></div>`); mobileContent.innerHTML=myAppsHtml+items.map(item=>item.type==='hero'?createMobileHeroCard(item):createMobileAppCard(item)).join(''); }
-        function createMobileHeroCard(item) { return `<div class="mobile-card">${createMobileAppInfo(item, `<div class="banner" style="background-image: url('${item.banner}')"><div class="overlay"><div class="subtitle">${item.subtitle || ''}</div><div class="title">${item.name}</div></div></div>`)}</div>`; }
-        function createMobileAppCard(item) { return `<div class="mobile-card">${createMobileAppInfo(item)}</div>`; }
-        function createMobileAppInfo(item, bannerHtml='') { const i=state.installedApps.has(item.id); return `${bannerHtml}<div class="app-info"><img src="${item.icon}" class="icon"><div class="details"><h3 class="name">${item.name}</h3><p class="category">${item.developer}</p></div><div><button class="action-button ${i?'open-button':'get-button'}" data-id="${item.id}" data-url="${item.downloadUrl}">${i?'OPEN':'GET'}</button><span class="in-app">In-App Purchases</span></div></div>`; }
+        // --- DOM Elements ---
+        const mainContent = document.querySelector('main');
+        const bottomNav = document.getElementById('bottom-nav');
+        const searchBar = document.querySelector('.search-bar');
+        
+        // Profile Modal Elements
+        const profileIcon = document.getElementById('profile-icon');
+        const profileModal = document.getElementById('profileModal');
+        const modalClose = document.getElementById('modal-close');
+        const profileForm = document.getElementById('profileForm');
+        const formResult = document.getElementById('form-result');
+        const profilePicChanger = document.getElementById('profile-pic-changer');
+        const profilePicInput = document.getElementById('profile-pic-input');
+        const usernameDisplay = document.getElementById('username-display');
+        const phoneDisplay = document.getElementById('phone-display');
+        const addressDisplay = document.getElementById('address-display');
+        const profilePicDisplay = document.getElementById('profile-pic-display');
+        const headerProfilePic = document.getElementById('header-profile-pic');
+        const headerProfileIconDefault = document.getElementById('header-profile-icon-default');
 
+        // --- APP RENDERING ---
+        function createAppElement(app) {
+            const isPaid = app.price !== undefined;
+            const isFavorited = favoritedAppIds.has(app.id);
+            const buttonClass = isPaid ? 'paid' : 'free';
+            const buttonText = isPaid ? `$${app.price}` : 'Download';
 
-        // --- NEW: App Detail View Functions ---
-        function openAppDetail(appId) {
-            const app = database.find(a => a.id === appId);
-            if (!app) return;
+            const appDiv = document.createElement('div');
+            appDiv.className = 'app-item';
+            appDiv.dataset.id = app.id;
 
-            detailView.innerHTML = `
-                <button class="detail-back-button">×</button>
-                <div class="detail-content">
-                    <div class="detail-banner" style="background-image: url('${app.banner}')"></div>
-                    <header class="detail-header">
-                        <img src="${app.icon}" class="icon" alt="">
-                        <div class="info">
-                            <h1 class="name">${app.name}</h1>
-                            <p class="developer">${app.developer}</p>
-                        </div>
-                        <button class="action-button open-button" data-id="${app.id}">OPEN</button>
-                    </header>
-                    <div class="detail-section">
-                        <h2>Description</h2>
-                        <p class="detail-description">${app.description || 'No description available.'}</p>
-                    </div>
-                    <div class="detail-section">
-                        <h2>Screenshots</h2>
-                        <div class="screenshot-gallery">
-                            ${(app.screenshots || []).map(url => `<img src="${url}" alt="Screenshot">`).join('')}
-                        </div>
-                    </div>
+            appDiv.innerHTML = `
+                <img src="${app.logo}" alt="${app.title} Logo" class="app-logo">
+                <div class="app-details">
+                    <p class="app-title">${app.title}</p>
+                    <p class="app-subtitle">${app.subtitle}</p>
+                </div>
+                <div class="app-actions">
+                    <a href="#" class="download-button ${buttonClass}" 
+                        data-type="${isPaid ? 'paid' : 'free'}" 
+                        data-link="${app.downloadLink || ''}" 
+                        data-price="${app.price || ''}"
+                        data-title="${app.title}">
+                        ${buttonText}
+                    </a>
+                    <button class="fav-button ${isFavorited ? 'favorited' : ''}">
+                        <i class="${isFavorited ? 'fas' : 'far'} fa-heart"></i>
+                    </button>
                 </div>`;
-            detailView.classList.add('visible');
-        }
-
-        function closeAppDetail() {
-            detailView.classList.remove('visible');
+            return appDiv;
         }
         
-        // --- MODIFIED Event Handlers & LOGIC ---
-        document.body.addEventListener('click', (e) => {
-            if (e.target.matches('.action-button')) {
-                const button = e.target;
-                const appId = button.dataset.id;
-                
-                if (state.installedApps.has(appId)) {
-                    // It's an "OPEN" button
-                    openAppDetail(appId);
-                } else {
-                    // It's a "GET" button
-                    alert(`Downloading ${database.find(a => a.id === appId).name}...`);
-                    window.location.href = button.dataset.url;
-                    state.installedApps.add(appId);
-                    saveState();
-                    render(database, document.querySelector('.nav-item.active')?.dataset.section || 'discover');
-                }
+        function renderApps(appsToRender) {
+            const forYouPanel = document.getElementById('forYou');
+            const topChartsPanel = document.getElementById('topCharts');
+            const premiumPanel = document.getElementById('premium');
+
+            forYouPanel.innerHTML = '';
+            topChartsPanel.innerHTML = '';
+            premiumPanel.innerHTML = '';
+
+            if (appsToRender.length === 0) {
+                 const activePanel = document.querySelector('.app-list-panel.active');
+                 if(activePanel) {
+                    activePanel.innerHTML = `<p class="no-results">No apps found matching your search.</p>`;
+                 }
+                return;
             }
-            // Add handler for the new back button
-            if (e.target.matches('.detail-back-button')) {
-                closeAppDetail();
+
+            appsToRender.forEach(app => {
+                const appElement = createAppElement(app);
+                const panel = document.getElementById(app.category);
+                if (panel) {
+                    panel.appendChild(appElement);
+                }
+            });
+        }
+        
+        function renderFavorites() {
+            const favoritesPage = document.getElementById('favorites-page');
+            favoritesPage.innerHTML = ''; 
+
+            const favoritedApps = appsData.filter(app => favoritedAppIds.has(app.id));
+
+            if (favoritedApps.length === 0) {
+                favoritesPage.innerHTML = `
+                    <div class="placeholder-content">
+                        <h2>Favorites</h2>
+                        <p>You haven't favorited any apps yet. Click the heart icon to add one!</p>
+                    </div>`;
+            } else {
+                favoritedApps.forEach(app => {
+                    favoritesPage.appendChild(createAppElement(app));
+                });
+            }
+        }
+
+        function loadFavoritesFromStorage() {
+            const storedFavorites = localStorage.getItem('favoritedAppIds');
+            if (storedFavorites) {
+                favoritedAppIds = new Set(JSON.parse(storedFavorites));
+            }
+        }
+        
+        function saveFavoritesToStorage() {
+            localStorage.setItem('favoritedAppIds', JSON.stringify([...favoritedAppIds]));
+        }
+
+        // --- EVENT LISTENERS ---
+
+        searchBar.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            const filteredApps = appsData.filter(app => 
+                app.title.toLowerCase().includes(searchTerm)
+            );
+            renderApps(filteredApps);
+        });
+        
+        mainContent.addEventListener('click', (e) => {
+            const target = e.target;
+            
+            const favButton = target.closest('.fav-button');
+            if (favButton) {
+                const appItem = favButton.closest('.app-item');
+                const appId = parseInt(appItem.dataset.id, 10);
+                const heartIcon = favButton.querySelector('i');
+
+                if (favoritedAppIds.has(appId)) {
+                    favoritedAppIds.delete(appId);
+                    favButton.classList.remove('favorited');
+                    heartIcon.classList.remove('fas');
+                    heartIcon.classList.add('far');
+                } else {
+                    favoritedAppIds.add(appId);
+                    favButton.classList.add('favorited');
+                    heartIcon.classList.remove('far');
+                    heartIcon.classList.add('fas');
+                }
+                saveFavoritesToStorage();
+
+                if (document.getElementById('favorites-page').classList.contains('active')) {
+                    renderFavorites();
+                }
+                return;
+            }
+
+            const downloadButton = target.closest('.download-button');
+            if (downloadButton) {
+                e.preventDefault();
+                const type = downloadButton.dataset.type;
+                const link = downloadButton.dataset.link;
+                const price = downloadButton.dataset.price;
+                const title = downloadButton.dataset.title;
+
+                if (type === 'paid') {
+                    // MODIFIED LOGIC: Check profile and send WhatsApp message
+                    const username = localStorage.getItem('username');
+                    const phone = localStorage.getItem('phone');
+                    const address = localStorage.getItem('address');
+
+                    // 1. Check if all required profile details are filled out
+                    if (!username || !phone || !address) {
+                        alert("Please complete your profile (username, phone, and address) before purchasing an app.\n\nClick the profile icon in the top-right corner to update your details.");
+                        return; // Stop the process if details are missing
+                    }
+
+                    // 2. If profile is complete, create the pre-filled WhatsApp message
+                    const message = `Hello, I would like to purchase the app "${title}" for $${price}.\n\nMy Details:\nUsername: ${username}\nPhone: ${phone}\nAddress: ${address}\n\nPlease send payment instructions. Thank you.`;
+                    
+                    // 3. Construct the WhatsApp URL
+                    const whatsappUrl = `https://wa.me/${WHATSAPP_PAYMENT_NUMBER}?text=${encodeURIComponent(message)}`;
+                    
+                    // 4. Open the URL in a new tab to launch WhatsApp
+                    window.open(whatsappUrl, '_blank');
+
+                } else {
+                    // Original logic for free apps
+                    window.open(link, '_blank');
+                }
             }
         });
 
-        // --- (Search and Nav handlers remain the same) ---
-        function handleSearch(query) { const v = document.querySelector('.nav-item.active')?.dataset.section || 'discover'; if (query.length > 0) { const f = database.filter(i => i.name.toLowerCase().includes(query) || i.developer.toLowerCase().includes(query)); render(f,v); } else { render(database, v); } }
-        document.getElementById('desktop-search-box').addEventListener('input', (e) => handleSearch(e.target.value.toLowerCase()));
-        document.getElementById('mobile-search-box').addEventListener('input', (e) => handleSearch(e.target.value.toLowerCase()));
-        document.getElementById('desktop-nav').addEventListener('click', (e) => { if(e.target.matches('.nav-item')) { document.querySelectorAll('#desktop-nav .nav-item').forEach(el => el.classList.remove('active')); e.target.classList.add('active'); render(database, e.target.dataset.section); } });
+        document.getElementById('content-tabs').addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                const targetTab = e.target.dataset.tab;
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.app-list-panel').forEach(panel => panel.classList.remove('active'));
+                e.target.classList.add('active');
+                document.getElementById(targetTab).classList.add('active');
+                searchBar.dispatchEvent(new Event('input'));
+            }
+        });
         
-        // --- INITIALIZATION (Unchanged) ---
-        function initialize() {
-            const ua = navigator.userAgent;
-            if (/Mobi|Android|iPhone/i.test(ua) || window.innerWidth < 768) { state.platform = 'mobile'; document.getElementById('mobile-view').style.display = 'block'; document.getElementById('mobile-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' }); }
-            else if (/Win/i.test(ua)) { state.platform = 'windows'; document.getElementById('desktop-view').style.display = 'flex'; }
-            else if (/Mac/i.test(ua)) { state.platform = 'mac'; document.getElementById('desktop-view').style.display = 'flex'; }
-            else { state.platform = 'desktop-other'; document.getElementById('desktop-view').style.display = 'flex'; }
-            render(database, 'discover');
-        }
+        bottomNav.addEventListener('click', (e) => {
+            const navItem = e.target.closest('.nav-item');
+            if (!navItem) return;
+            e.preventDefault();
 
-        initialize();
-    });
+            const targetPageId = navItem.dataset.page;
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            navItem.classList.add('active');
+
+            document.querySelectorAll('.main-panel').forEach(panel => panel.classList.remove('active'));
+            const targetPage = document.getElementById(targetPageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+
+            if (targetPageId === 'favorites-page') {
+                renderFavorites();
+            }
+        });
+
+        // --- PROFILE MODAL & FORM LOGIC ---
+        profileIcon.addEventListener('click', () => { profileModal.style.display = 'block'; });
+        modalClose.addEventListener('click', () => { profileModal.style.display = 'none'; });
+        window.addEventListener('click', (e) => { if (e.target == profileModal) { profileModal.style.display = 'none'; } });
+
+        function loadProfileFromStorage() {
+            const username = localStorage.getItem('username'), phone = localStorage.getItem('phone'), address = localStorage.getItem('address'), profilePic = localStorage.getItem('profilePic');
+            if (username) { usernameDisplay.textContent = username; document.getElementById('username').value = username; }
+            if (phone) { phoneDisplay.textContent = phone; document.getElementById('phone').value = phone; }
+            if (address) { addressDisplay.textContent = address; document.getElementById('address').value = address; }
+            if (profilePic) { profilePicDisplay.src = profilePic; headerProfilePic.src = profilePic; headerProfilePic.style.display = 'block'; headerProfileIconDefault.style.display = 'none'; } 
+            else { profilePicDisplay.src = ""; headerProfilePic.style.display = 'none'; headerProfileIconDefault.style.display = 'block'; }
+        }
+        
+        profileForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // This check prevents sending the form if the key is not set.
+            if (WEB3FORMS_ACCESS_KEY === "YOUR_ACCESS_KEY_HERE") { 
+                formResult.style.color = 'red'; 
+                formResult.textContent = "Error: Please set your Web3Forms access key in the script."; 
+                return; // Stop execution here
+            }
+            
+            formResult.textContent = "Submitting...";
+            // We must update the hidden access key field in the form before submitting
+            profileForm.querySelector("input[name=access_key]").value = WEB3FORMS_ACCESS_KEY;
+            
+            const formData = new FormData(profileForm);
+            const json = JSON.stringify(Object.fromEntries(formData));
+            
+            try {
+                const response = await fetch("https://api.web3forms.com/submit", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: json });
+                const result = await response.json();
+                
+                // Only if the email was sent successfully...
+                if (result.success) {
+                    formResult.style.color = 'green'; 
+                    formResult.textContent = "Profile updated and submitted successfully!";
+                    // ...then we save the data locally.
+                    localStorage.setItem('username', document.getElementById('username').value); 
+                    localStorage.setItem('phone', document.getElementById('phone').value); 
+                    localStorage.setItem('address', document.getElementById('address').value);
+                    loadProfileFromStorage(); // And update the display
+                } else { 
+                    formResult.style.color = 'red'; 
+                    formResult.textContent = result.message || "An error occurred."; 
+                }
+            } catch (error) { 
+                console.error('Form submission error:', error); 
+                formResult.style.color = 'red'; 
+                formResult.textContent = "An error occurred while submitting."; 
+            }
+            
+            setTimeout(() => { formResult.textContent = ''; }, 5000);
+        });
+
+        profilePicChanger.addEventListener('click', () => { profilePicInput.click(); });
+        profilePicInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageUrl = event.target.result;
+                    profilePicDisplay.src = imageUrl; headerProfilePic.src = imageUrl; headerProfilePic.style.display = 'block'; headerProfileIconDefault.style.display = 'none';
+                    localStorage.setItem('profilePic', imageUrl);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFavoritesFromStorage();
+            renderApps(appsData);
+            loadProfileFromStorage();
+        });
+
     </script>
 </body>
 </html>
