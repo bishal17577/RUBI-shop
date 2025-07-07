@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web App Store</title>
+    <title>RUBI STORE</title>
     <!-- Using Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
@@ -13,13 +13,14 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
     <style>
-        /* --- MODERN & RESPONSIVE DESIGN (WITH NEW ADDITIONS) --- */
+        /* --- MODERN & RESPONSIVE DESIGN --- */
         :root {
             --primary-color: #0a68ff; --primary-color-light: #e7f3ff; --background-color: #f0f2f5;
             --surface-color: #ffffff; --text-primary: #1c1e21; --text-secondary: #65676b;
             --border-color: #e4e6eb; --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.08);
             --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.12); --sidebar-width: 240px;
         }
+        *, *::before, *::after { box-sizing: border-box; }
         html { font-size: 16px; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -32,9 +33,10 @@
             transition: background-color 0.1s ease;
         }
         .header {
-            position: fixed; top: 0; left: 0; width: 100%; display: flex; align-items: center;
-            gap: 15px; padding: 10px 15px; background-color: var(--surface-color);
-            box-shadow: var(--shadow-1); z-index: 1000; box-sizing: border-box;
+            position: fixed; top: 0; left: 0; width: 100%; display: flex;
+            align-items: center; gap: 15px; padding: 10px 15px;
+            background-color: var(--surface-color); box-shadow: var(--shadow-1);
+            z-index: 1000;
         }
         .header .logo { font-weight: 700; font-size: 1.5rem; color: var(--primary-color); }
         .header .search-bar {
@@ -57,9 +59,10 @@
             background-color: var(--surface-color); border-radius: 12px;
         }
         .content-tabs {
-            display: flex; justify-content: flex-start; gap: 10px; padding: 5px 15px;
-            margin: -15px -15px 15px -15px; background-color: var(--surface-color);
-            border-bottom: 1px solid var(--border-color); overflow-x: auto;
+            display: flex; justify-content: flex-start; gap: 10px;
+            padding: 5px 15px; margin: -15px -15px 15px -15px;
+            background-color: var(--surface-color); border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
         }
         .content-tabs button {
             background: none; border: none; font-size: 1rem; font-weight: 600;
@@ -69,58 +72,61 @@
         }
         .content-tabs button:hover { background-color: var(--background-color); border-radius: 8px; }
         .content-tabs button.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
-        .app-list-panel, #favorite-apps-container { display: none; padding: 0 10px; }
+        .app-list-panel, #favorite-apps-container { display: none; padding: 0 5px; }
         .app-list-panel.active, #favorite-apps-container.active { display: block; }
-        .app-list-panel .no-results, #favorites-page .no-results { padding: 40px 20px; text-align: center; color: var(--text-secondary); }
-        .app-item, .cloned-post-card {
-            display: flex; align-items: center; padding: 15px;
-            background-color: var(--surface-color); margin: 10px 0; border-radius: 12px;
-            box-shadow: var(--shadow-1); transition: transform 0.2s ease, box-shadow 0.2s ease;
+        .app-list-panel .no-results { padding: 40px 20px; text-align: center; color: var(--text-secondary); }
+        .app-item {
+            position: relative; display: flex; align-items: center; padding: 15px;
+            background-color: var(--surface-color); margin: 10px 0;
+            border-radius: 12px; box-shadow: var(--shadow-1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .app-item:hover, .cloned-post-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
-        .app-logo { width: 60px; height: 60px; border-radius: 15px; object-fit: cover; margin-right: 15px; }
-        .app-details { flex-grow: 1; }
+        .app-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+        .app-logo { width: 60px; height: 60px; border-radius: 15px; object-fit: cover; margin-right: 15px; flex-shrink: 0; }
+        .app-details { flex-grow: 1; min-width: 0; }
         .app-title { font-weight: 600; font-size: 1.05rem; margin: 0; }
-        .app-subtitle { font-size: 0.875rem; color: var(--text-secondary); margin: 4px 0 0; }
-        .app-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+        .app-subtitle { font-size: 0.875rem; color: var(--text-secondary); margin: 4px 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .app-actions { display: flex; align-items: center; gap: 15px; }
         .download-button {
-            padding: 8px 18px; border-radius: 20px; border: none; font-weight: 700; cursor: pointer;
-            text-decoration: none; color: var(--surface-color); background-color: var(--primary-color);
-            font-size: 0.875rem; text-align: center; transition: background-color 0.2s ease, transform 0.1s ease;
+            padding: 8px 18px; border-radius: 20px; border: none; font-weight: 700;
+            cursor: pointer; text-decoration: none; color: var(--surface-color);
+            background-color: var(--primary-color); font-size: 0.875rem; text-align: center;
+            transition: background-color 0.2s ease, transform 0.1s ease; white-space: nowrap;
         }
         .download-button:active { transform: scale(0.95); }
         .download-button.paid { background-color: #28a745; }
         .fav-button {
             background: none; border: none; cursor: pointer; font-size: 1.5rem;
-            color: #ccc; transition: color 0.2s ease, transform 0.2s ease;
+            color: #ccc; transition: color 0.2s ease, transform 0.2s ease; padding: 0;
         }
         .fav-button:hover { transform: scale(1.1); }
         .fav-button.favorited { color: #e53935; }
         .app-qrcode {
-            width: 50px; height: 50px; background: white;
-            padding: 4px; border-radius: 4px; box-shadow: var(--shadow-1);
-            cursor: pointer;
+            position: center; top: 5px; right: 5px; width: 50px; height: 50px;
+            background: white; padding: 4px; border-radius: 4px; box-shadow: var(--shadow-1);
+            opacity: 0; transition: opacity 0.2s ease; cursor: pointer;
         }
-        #work-page-container, #favorite-posts-container { display: grid; grid-template-columns: 1fr; gap: 16px; font-family: Arial, sans-serif; }
+        .app-item:hover .app-qrcode { opacity: 1; }
+        #work-page-container { display: grid; grid-template-columns: 1fr; gap: 16px; font-family: Arial, sans-serif; }
         .post-card {
             background: var(--surface-color); border-radius: 12px; padding: 16px;
-            box-shadow: var(--shadow-1); display: flex; flex-direction: column; box-sizing: border-box;
+            box-shadow: var(--shadow-1); display: flex; flex-direction: column;
         }
         .post-card .post-time-live { font-size: 0.8rem; color: var(--primary-color); font-weight: 600; }
         .post-image { width: 100%; border-radius: 8px; margin-top: 12px; cursor: pointer; transition: transform 0.3s ease; }
         .action-buttons { display:flex; justify-content:space-around; margin-top:5px; }
         .action-buttons button {
-            border: none; background: none; cursor: pointer; padding: 8px 10px; font-size: 0.875rem;
-            color: var(--text-secondary); font-weight: 600; border-radius: 6px;
-            transition: background-color 0.2s ease; flex-grow: 1;
+            border: none; background: none; cursor: pointer; padding: 8px 10px;
+            font-size: 0.875rem; color: var(--text-secondary); font-weight: 600;
+            border-radius: 6px; transition: background-color 0.2s ease; flex-grow: 1;
         }
-        .action-buttons button.fav-button { font-size: 1.2rem; flex-grow: 0; padding: 8px; }
-        .action-buttons button:not(.fav-button):hover { background-color: var(--background-color); }
+        .action-buttons button:hover { background-color: var(--background-color); }
         .zoom-overlay, #qr-zoom-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85);
-            display: none; justify-content: center; align-items: center; z-index: 9999; cursor: zoom-out;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85); display: none; justify-content: center;
+            align-items: center; z-index: 9999; cursor: zoom-out;
         }
-        .zoom-overlay img, #qr-zoom-overlay-content { max-width: 90%; max-height: 90%; }
+        .zoom-overlay img { max-width: 90%; max-height: 90%; }
         #qr-zoom-overlay-content { background: white; padding: 20px; border-radius: 10px; }
         #favorites-page h3 { padding-left: 15px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
         #scanner-page { padding: 20px; background-color: var(--surface-color); border-radius: 12px; }
@@ -130,15 +136,23 @@
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; display: flex;
             justify-content: space-around; background-color: var(--surface-color);
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.05); padding: 5px 0;
-            z-index: 1000; border-top: 1px solid var(--border-color);
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.05); height: 65px;
+            align-items: center; z-index: 1000; border-top: 1px solid var(--border-color);
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-secondary); text-decoration: none; padding: 5px 10px; cursor: pointer; transition: color 0.2s ease; }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-secondary); text-decoration: none; padding: 5px 10px;
+            cursor: pointer; transition: color 0.2s ease; flex-grow: 1; height: 100%;
+        }
         .nav-item i { font-size: 1.4rem; }
         .nav-item span { font-size: 0.75rem; margin-top: 4px; }
         .nav-item.active { color: var(--primary-color); }
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative; }
+        .modal-content {
+            background-color: #fefefe; margin: 5vh auto; padding: 20px; border-radius: 10px;
+            width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative; max-height: 90vh; overflow-y: auto;
+        }
         .modal .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
         .modal-content h2 { margin-top: 0; }
         .modal-content .profile-display { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
@@ -155,31 +169,41 @@
         .control-group { margin-bottom: 15px; }
         .control-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
         .slider-container input[type="range"] { width: 100%; cursor: pointer; }
-        .font-size-controls button { padding: 8px 12px; font-size: 1rem; margin-right: 10px; border: 1px solid var(--border-color); background-color: var(--surface-color); border-radius: 5px; cursor: pointer; }
-        
+        .font-size-controls button {
+            padding: 8px 12px; font-size: 1rem; margin-right: 10px;
+            border: 1px solid var(--border-color); background-color: var(--surface-color);
+            border-radius: 5px; cursor: pointer;
+        }
         @media (min-width: 768px) {
             body { padding-bottom: 0; padding-left: var(--sidebar-width); }
-            main { max-width: 1200px; padding: 25px 40px; margin: 0 auto; }
-            .bottom-nav { width: var(--sidebar-width); height: 100vh; flex-direction: column; justify-content: flex-start; align-items: stretch; padding: 20px 0; top: 60px; box-shadow: none; border-top: none; border-right: 1px solid var(--border-color); }
-            .nav-item { flex-direction: row; align-items: center; padding: 15px 25px; border-radius: 0 50px 50px 0; margin-right: 20px; }
-            .nav-item i { font-size: 1.25rem; margin-bottom: 0; margin-right: 20px; width: 24px; }
+            .bottom-nav {
+                width: var(--sidebar-width); height: 100vh; flex-direction: column; justify-content: flex-start;
+                align-items: stretch; padding: 20px 0; top: 60px; box-shadow: none; border-top: none;
+                border-right: 1px solid var(--border-color);
+            }
+            .nav-item {
+                flex-direction: row; align-items: center; padding: 15px 25px;
+                border-radius: 0 50px 50px 0; margin-right: 20px; height: auto;
+            }
+            .nav-item i { font-size: 1.25rem; margin-right: 20px; width: 24px; }
             .nav-item span { font-size: 1rem; font-weight: 500; }
             .nav-item.active { background-color: var(--primary-color-light); color: var(--primary-color); }
             .header { padding: 10px 30px; left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); }
             .header .logo { display: none; }
-            .app-list-panel, #favorite-apps-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; padding: 0; }
-            .app-item, .cloned-post-card { margin-bottom: 0; }
-            #work-page-container, #favorite-posts-container { grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); }
+            .app-list-panel, #favorite-apps-container {
+                display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 20px; padding: 0;
+            }
+            .app-item { margin-bottom: 0; }
+            #work-page-container { grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); }
             @media (min-width: 1200px) {
-                #work-page-container, #favorite-posts-container { grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); }
+                #work-page-container { grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); }
             }
         }
     </style>
 </head>
 <body>
     <div class="brightness-overlay" id="brightness-overlay"></div>
-    
-    <!-- Header -->
     <header class="header">
         <div class="logo">RUBI STORE</div>
         <input type="search" class="search-bar" id="search-bar" placeholder="Search everything...">
@@ -189,9 +213,7 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main>
-        <!-- Apps Page (Default) -->
         <div id="apps-page" class="main-panel active">
             <nav class="content-tabs" id="content-tabs">
                 <button class="tab-button active" data-tab="forYou">For You</button>
@@ -202,29 +224,19 @@
             <div id="topCharts" class="app-list-panel"></div>
             <div id="premium" class="app-list-panel"></div>
         </div>
-
-        <!-- Favorites Page -->
         <div id="favorites-page" class="main-panel">
-            <h3>Favorite Apps</h3>
-            <div id="favorite-apps-container"></div>
-            <h3>Favorite Posts</h3>
-            <div id="favorite-posts-container"></div>
-            <div id="favorites-placeholder" class="placeholder-content" style="display: none;">
+             <div id="favorites-placeholder" class="placeholder-content" style="display: none;">
                 <h2>No Favorites Yet</h2>
-                <p>Click the heart icon on any app or post to add it here.</p>
+                <p>Click the heart icon on any app to add it here.</p>
             </div>
+            <div id="favorite-apps-container" class="app-list-panel"></div>
         </div>
-        
-        <!-- Work Page -->
         <div id="work-page" class="main-panel">
           <div id="work-page-container">
-            <!-- Posts are dynamically generated but kept here as templates -->
-            <div class="post-card" data-id="post-1" data-name="bishal shrestha">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <div style="display: flex; align-items: center;">
+            <div class="post-card" data-name="bishal shrestha">
+              <div style="display: flex; align-items: center;">
                     <img src="https://i.ibb.co/Jj524zmb/edited-image.png" alt="Profile" style="width:40px; height:40px; border-radius:50%; margin-right:10px;">
                     <div><strong>Bishal Shrestha</strong><br><span class="post-time-live"></span></div>
-                </div>
               </div>
               <div style="margin-top:10px;">2082/03/23 starting date of RUBI STORE</div>
               <img src="https://i.ibb.co/MyZkTB0S/IMG-20241206-112150-7.jpg" class="post-image" data-download="rubi-store.jpg">
@@ -233,15 +245,12 @@
                 <button class="post-download-btn">⬇️ Download</button>
                 <button class="post-whatsapp-btn">💬 WhatsApp</button>
                 <button class="post-share-btn">🔗 Share</button>
-                <button class="fav-button"><i class="far fa-heart"></i></button>
               </div>
             </div>
-            <div class="post-card" data-id="post-2" data-name="vx xtha">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <div style="display: flex; align-items: center;">
+            <div class="post-card" data-name="vx xtha">
+              <div style="display: flex; align-items: center;">
                     <img src="https://i.ibb.co/RGNNMjyj/VX.png" alt="Profile" style="width:40px; height:40px; border-radius:50%; margin-right:10px;">
                     <div><strong>VX XTHA</strong><br><span class="post-time-live"></span></div>
-                </div>
               </div>
               <div style="margin-top:10px;">Enjoying a great trip today!</div>
               <img src="https://i.ibb.co/NdWT4gmg/1000011944.jpg" class="post-image" data-download="trip-photo.jpg">
@@ -250,13 +259,10 @@
                 <button class="post-download-btn">⬇️ Download</button>
                 <button class="post-whatsapp-btn">💬 WhatsApp</button>
                 <button class="post-share-btn">🔗 Share</button>
-                <button class="fav-button"><i class="far fa-heart"></i></button>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- Scanner Page -->
         <div id="scanner-page" class="main-panel">
             <h2>QR & Barcode Scanner</h2>
             <div id="scanner-reader"></div>
@@ -264,11 +270,9 @@
         </div>
     </main>
 
-    <!-- Overlays -->
     <div class="zoom-overlay" id="zoomOverlay"><img src=" " id="zoomedImage"></div>
     <div id="qr-zoom-overlay"><div id="qr-zoom-overlay-content"></div></div>
-    
-    <!-- Bottom Navigation -->
+
     <nav class="bottom-nav" id="bottom-nav">
         <a href="#" class="nav-item active" data-page="apps-page"><i class="fas fa-th-large"></i><span>Apps</span></a>
         <a href="#" class="nav-item" data-page="favorites-page"><i class="far fa-heart"></i><span>Favorites</span></a>
@@ -276,14 +280,14 @@
         <a href="#" class="nav-item" data-page="scanner-page"><i class="fas fa-qrcode"></i><span>Scanner</span></a>
     </nav>
     
-    <!-- Profile Modal -->
     <div id="profileModal" class="modal">
         <div class="modal-content">
             <span class="close" id="modal-close">×</span>
             <h2>My Profile & Settings</h2>
             <div class="profile-display">
                 <div class="profile-pic-container" id="profile-pic-changer">
-                    <img id="profile-pic-display" src=" "><input type="file" id="profile-pic-input" accept="image/*"><div class="overlay">Change</div>
+                    <img id="profile-pic-display" src=" ">
+                    <div class="overlay">Change</div>
                 </div>
                 <div class="profile-info">
                     <p><strong>Username:</strong> <span id="username-display">Not Set</span></p>
@@ -295,6 +299,7 @@
                 <input type="text" id="username" name="username" placeholder="Enter your username" required>
                 <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
                 <input type="text" id="address" name="address" placeholder="Enter your address" required>
+                <input type="file" id="profile-pic-input" accept="image/*" style="display:none;">
                 <button type="submit" class="save-btn">Save & Update Profile</button>
             </form>
             <p id="form-result" style="text-align: center; margin-top: 10px;"></p>
@@ -306,7 +311,10 @@
                 </div>
                 <div class="control-group">
                     <label>Text Size</label>
-                    <div class="font-size-controls"><button id="decrease-font">-A</button><button id="increase-font">A+</button></div>
+                    <div class="font-size-controls">
+                        <button id="decrease-font">-A</button>
+                        <button id="increase-font">A+</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -318,26 +326,16 @@
         const appsData = [
             { id: 1, imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', title: 'Krish Bakery', subtitle: 'Cake Coffee & Gift House', category: 'forYou', downloadLink: 'https://bishal17577.github.io/krishbakery/' },
             { id: 2, imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', title: 'Chapakhana', subtitle: 'Online Press Store', category: 'forYou', downloadLink: 'https://bishal17577.github.io/chapakhana/' },
-            { id: 3, imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', title: 'Digital Bill', subtitle: 'Online Bill Maker', category: 'premium', price: 400, downloadLink: 'https://example.com/digitalbill' },
-            { id: 4, imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', title: 'Digital Bill', subtitle: 'Online Bill Maker', rank: 1, category: 'topCharts', price: 400, downloadLink: 'https://example.com/digitalbill' },
+            { id: 3, imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', title: 'Digital Bill', subtitle: 'Online Bill Maker for shop', category: 'premium', price: 400, downloadLink: 'https://example.com/digitalbill-premium' },
+            { id: 4, imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', title: 'Digital Bill', subtitle: 'Online Bill Maker for shop', rank: 1, category: 'topCharts', price: 400, downloadLink: 'https://example.com/digitalbill-top' },
         ];
         
         let favoritedAppIds = new Set();
-        let favoritedPostIds = new Set();
         let html5QrCode = null;
         
-        // --- DOM Elements ---
-        const mainContent = document.querySelector('main');
-        const bottomNav = document.getElementById('bottom-nav');
-        const searchBar = document.getElementById('search-bar');
-        const profileIcon = document.getElementById('profile-icon');
-        const profileModal = document.getElementById('profileModal');
-        const qrZoomOverlay = document.getElementById('qr-zoom-overlay');
-        const qrZoomContent = document.getElementById('qr-zoom-overlay-content');
-        const zoomOverlay = document.getElementById('zoomOverlay');
-
-        // --- APP & POST RENDERING ---
+        // --- App & Post Rendering ---
         function createAppElement(app) {
+            const isPaid = app.price !== undefined;
             const isFavorited = favoritedAppIds.has(app.id);
             const appDiv = document.createElement('div');
             appDiv.className = 'app-item';
@@ -345,174 +343,223 @@
             appDiv.dataset.title = app.title.toLowerCase();
             appDiv.dataset.subtitle = app.subtitle.toLowerCase();
             appDiv.innerHTML = `
+                <div class="app-qrcode" id="qrcode-${app.id}"></div>
                 <img src="${app.imageSrc}" alt="${app.title} Logo" class="app-logo"> 
                 <div class="app-details">
-                    <p class="app-title">${app.title}</p><p class="app-subtitle">${app.subtitle}</p>
+                    <p class="app-title">${app.title}</p>
+                    <p class="app-subtitle">${app.subtitle}</p>
                 </div>
                 <div class="app-actions">
-                    <a href="#" class="download-button ${app.price ? 'paid' : 'free'}" data-type="${app.price ? 'paid' : 'free'}" data-link="${app.downloadLink || ''}" data-price="${app.price || ''}" data-title="${app.title}">${app.price ? `Rs${app.price}` : 'GET'}</a>
+                    <a href="#" class="download-button ${isPaid ? 'paid' : 'free'}" data-type="${isPaid ? 'paid' : 'free'}" data-link="${app.downloadLink || ''}" data-price="${app.price || ''}" data-title="${app.title}">${isPaid ? `Rs${app.price}` : 'GET'}</a>
                     <button class="fav-button ${isFavorited ? 'favorited' : ''}"><i class="${isFavorited ? 'fas' : 'far'} fa-heart"></i></button>
-                    <div class="app-qrcode" id="qrcode-${app.id}" data-link="${app.downloadLink || ''}"></div>
                 </div>`;
             if (app.downloadLink) {
-                setTimeout(() => new QRCode(appDiv.querySelector(`#qrcode-${app.id}`), { text: app.downloadLink, width: 50, height: 50, correctLevel: QRCode.CorrectLevel.L }), 0);
+                setTimeout(() => {
+                    const qrContainer = appDiv.querySelector(`#qrcode-${app.id}`);
+                    if (qrContainer) try { new QRCode(qrContainer, { text: app.downloadLink, width: 40, height: 40 }); } catch(e) { console.error("QR Code Error:", e); }
+                }, 0);
             }
             return appDiv;
         }
         
-        function renderApps() {
+        function renderApps(appsToRender) {
             const panels = { forYou: [], topCharts: [], premium: [] };
-            appsData.forEach(app => {
+            appsToRender.forEach(app => {
                 if (panels[app.category]) panels[app.category].push(createAppElement(app));
             });
             Object.keys(panels).forEach(key => {
                 const panelEl = document.getElementById(key);
                 panelEl.innerHTML = '';
                 if(panels[key].length > 0) panelEl.append(...panels[key]);
+                else if(panelEl.classList.contains('active')) panelEl.innerHTML = `<p class="no-results">No apps found.</p>`;
             });
         }
         
         function renderFavorites() {
-            const favAppsContainer = document.getElementById('favorite-apps-container');
-            const favPostsContainer = document.getElementById('favorite-posts-container');
+            const favContainer = document.getElementById('favorite-apps-container');
             const placeholder = document.getElementById('favorites-placeholder');
-            
-            favAppsContainer.innerHTML = '';
-            favPostsContainer.innerHTML = '';
-
+            favContainer.innerHTML = '';
             const favoritedApps = appsData.filter(app => favoritedAppIds.has(app.id));
-            if (favoritedApps.length > 0) {
-                favAppsContainer.style.display = 'grid';
-                favoritedApps.forEach(app => favAppsContainer.appendChild(createAppElement(app)));
+            if (favoritedApps.length === 0) {
+                placeholder.style.display = 'block';
+                favContainer.style.display = 'none';
             } else {
-                favAppsContainer.style.display = 'none';
-            }
-
-            const allPosts = document.querySelectorAll('#work-page .post-card');
-            const favoritedPosts = Array.from(allPosts).filter(post => favoritedPostIds.has(post.dataset.id));
-            if (favoritedPosts.length > 0) {
-                favPostsContainer.style.display = 'grid';
-                favoritedPosts.forEach(post => {
-                    const clone = post.cloneNode(true);
-                    clone.classList.add('cloned-post-card'); 
-                    favPostsContainer.appendChild(clone);
-                });
-            } else {
-                favPostsContainer.style.display = 'none';
-            }
-            placeholder.style.display = (favoritedApps.length === 0 && favoritedPosts.length === 0) ? 'block' : 'none';
-        }
-
-        // --- STORAGE & STATE MANAGEMENT ---
-        function loadFromStorage() {
-            const storedAppFavs = localStorage.getItem('favoritedAppIds');
-            if (storedAppFavs) favoritedAppIds = new Set(JSON.parse(storedAppFavs));
-            const storedPostFavs = localStorage.getItem('favoritedPostIds');
-            if (storedPostFavs) favoritedPostIds = new Set(JSON.parse(storedPostFavs));
-        }
-        function saveAppFavorites() { localStorage.setItem('favoritedAppIds', JSON.stringify([...favoritedAppIds])); }
-        function savePostFavorites() { localStorage.setItem('favoritedPostIds', JSON.stringify([...favoritedPostIds])); }
-
-        function updateWorkPageFavoriteIcons() {
-            document.querySelectorAll('#work-page .post-card').forEach(card => {
-                const favButton = card.querySelector('.fav-button');
-                if (!favButton) return;
-                const heartIcon = favButton.querySelector('i');
-                if (favoritedPostIds.has(card.dataset.id)) {
-                    favButton.classList.add('favorited');
-                    heartIcon.classList.replace('far', 'fas');
-                } else {
-                    favButton.classList.remove('favorited');
-                    heartIcon.classList.replace('fas', 'far');
-                }
-            });
-        }
-        
-        // --- IMAGE DOWNLOAD AS JPG ---
-        async function downloadImageAsJpg(url, filename) {
-            try {
-                const response = await fetch(url, { "crossOrigin": "Anonymous" });
-                if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
-                const blob = await response.blob();
-                const bitmap = await createImageBitmap(blob);
-                const canvas = document.createElement('canvas');
-                canvas.width = bitmap.width;
-                canvas.height = bitmap.height;
-                const ctx = canvas.getContext('2d');
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(bitmap, 0, 0);
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-                const link = document.createElement('a');
-                link.href = dataUrl;
-                link.download = filename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } catch (error) {
-                console.error('Image download failed:', error);
-                alert('Could not download image. Trying direct download...');
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = filename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                placeholder.style.display = 'none';
+                favContainer.style.display = 'grid';
+                favoritedApps.forEach(app => favContainer.appendChild(createAppElement(app)));
             }
         }
         
-        // --- EVENT DELEGATION FOR DYNAMIC CONTENT ---
+        // --- State Management (LocalStorage) ---
+        function loadFavoritesFromStorage() {
+            const stored = localStorage.getItem('favoritedAppIds');
+            if (stored) favoritedAppIds = new Set(JSON.parse(stored));
+        }
+        
+        function saveFavoritesToStorage() {
+            localStorage.setItem('favoritedAppIds', JSON.stringify([...favoritedAppIds]));
+        }
+
+        function loadProfileFromStorage() {
+            const username = localStorage.getItem('username') || 'Not Set';
+            const phone = localStorage.getItem('phone') || 'Not Set';
+            const address = localStorage.getItem('address') || 'Not Set';
+            const profilePic = localStorage.getItem('profilePic');
+
+            document.getElementById('username-display').textContent = username;
+            document.getElementById('phone-display').textContent = phone;
+            document.getElementById('address-display').textContent = address;
+            
+            document.getElementById('username').value = (username !== 'Not Set') ? username : '';
+            document.getElementById('phone').value = (phone !== 'Not Set') ? phone : '';
+            document.getElementById('address').value = (address !== 'Not Set') ? address : '';
+
+            const profilePicDisplay = document.getElementById('profile-pic-display');
+            const headerProfilePic = document.getElementById('header-profile-pic');
+            const headerProfileIconDefault = document.getElementById('header-profile-icon-default');
+            
+            if (profilePic) {
+                profilePicDisplay.src = profilePic;
+                headerProfilePic.src = profilePic;
+                headerProfilePic.style.display = 'block';
+                headerProfileIconDefault.style.display = 'none';
+            } else {
+                profilePicDisplay.src = '';
+                headerProfilePic.src = '';
+                headerProfilePic.style.display = 'none';
+                headerProfileIconDefault.style.display = 'block';
+            }
+        }
+        
+        // --- Event Delegation & Core Logic ---
         document.body.addEventListener('click', (e) => {
-            const appFavButton = e.target.closest('.app-item .fav-button');
-            if (appFavButton) {
-                const appItem = appFavButton.closest('.app-item');
+            const target = e.target;
+
+            // Favorite Button
+            const favButton = target.closest('.fav-button');
+            if (favButton) {
+                const appItem = favButton.closest('.app-item');
                 const appId = parseInt(appItem.dataset.id, 10);
-                if (favoritedAppIds.has(appId)) favoritedAppIds.delete(appId);
-                else favoritedAppIds.add(appId);
-                saveAppFavorites();
-                renderApps();
-                if (document.getElementById('favorites-page').classList.contains('active')) renderFavorites();
+                if (favoritedAppIds.has(appId)) {
+                    favoritedAppIds.delete(appId);
+                } else {
+                    favoritedAppIds.add(appId);
+                }
+                saveFavoritesToStorage();
+                renderApps(appsData);
+                if (document.getElementById('favorites-page').classList.contains('active')) {
+                    renderFavorites();
+                }
                 return;
             }
 
-            const postFavButton = e.target.closest('.post-card .fav-button');
-            if (postFavButton) {
-                const postCard = postFavButton.closest('.post-card');
-                const postId = postCard.dataset.id;
-                if (favoritedPostIds.has(postId)) favoritedPostIds.delete(postId);
-                else favoritedPostIds.add(postId);
-                savePostFavorites();
-                updateWorkPageFavoriteIcons();
-                if (document.getElementById('favorites-page').classList.contains('active')) renderFavorites();
-                return;
-            }
-            
-            const postDownloadBtn = e.target.closest('.post-download-btn');
-            if (postDownloadBtn) {
+            // Download/Purchase Button
+            const downloadButton = target.closest('.download-button');
+            if (downloadButton) {
                 e.preventDefault();
-                const img = postDownloadBtn.closest('.post-card').querySelector('.post-image');
-                const url = img.src;
-                const filename = (img.dataset.download || 'image.jpg').replace(/\.[^/.]+$/, "") + ".jpg";
-                postDownloadBtn.textContent = 'Downloading...';
-                downloadImageAsJpg(url, filename).finally(() => {
-                    postDownloadBtn.textContent = '⬇️ Download';
-                });
+                const { type, link, price, title } = downloadButton.dataset;
+                if (type === 'paid') {
+                    const username = localStorage.getItem('username');
+                    const phone = localStorage.getItem('phone');
+                    const address = localStorage.getItem('address');
+                    if (!username || !phone || !address || username === 'Not Set' || phone === 'Not Set' || address === 'Not Set') {
+                        alert("Please complete your profile (Username, Phone, and Address) before purchasing.");
+                        document.getElementById('profileModal').style.display = 'block';
+                        return;
+                    }
+                    const message = `Hello, I would like to purchase the following app:\n\n` +
+                                  `*App/Game:* ${title}\n` +
+                                  `*Price:* Rs${price}\n\n` +
+                                  `--- My Details ---\n` +
+                                  `*Username:* ${username}\n` +
+                                  `*Phone:* ${phone}\n` +
+                                  `*Address:* ${address}`;
+                    window.open(`https://wa.me/${WHATSAPP_PAYMENT_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+                } else if (link) {
+                    window.open(link, '_blank');
+                }
                 return;
             }
             
-            const postImage = e.target.closest('.post-image');
-            if (postImage) { document.getElementById('zoomedImage').src = postImage.src; zoomOverlay.style.display = 'flex'; return; }
-            
-            const qrCode = e.target.closest('.app-qrcode');
-            if (qrCode && qrCode.dataset.link) {
-                qrZoomContent.innerHTML = '';
-                new QRCode(qrZoomContent, { text: qrCode.dataset.link, width: 256, height: 256 });
-                qrZoomOverlay.style.display = 'flex';
+            // QR Code Zoom
+            const qrCode = target.closest('.app-qrcode');
+            if (qrCode && qrCode.id) {
+                const qrContent = document.getElementById('qr-zoom-overlay-content');
+                qrContent.innerHTML = '';
+                const appData = appsData.find(app => `qrcode-${app.id}` === qrCode.id);
+                if(appData && appData.downloadLink) {
+                    new QRCode(qrContent, { text: appData.downloadLink, width: 256, height: 256 });
+                    document.getElementById('qr-zoom-overlay').style.display = 'flex';
+                }
                 return;
+            }
+
+            // Work Page Actions
+            const postDownloadBtn = target.closest('.post-download-btn');
+            if(postDownloadBtn) {
+                const img = postDownloadBtn.closest(".post-card").querySelector(".post-image");
+                const a = document.createElement("a");
+                a.href = img.src;
+                a.download = img.dataset.download || "image.jpg";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                return;
+            }
+            
+            const postWhatsappBtn = target.closest('.post-whatsapp-btn');
+            if (postWhatsappBtn) {
+                const card = postWhatsappBtn.closest(".post-card");
+                const name = card.querySelector("strong").innerText;
+                const text = card.querySelector("div[style*='margin-top:10px']").innerText;
+                const message = `Check out this post by *${name}*:\n\n_"${text.trim()}"_`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
+                return;
+            }
+
+            const postShareBtn = target.closest('.post-share-btn');
+            if (postShareBtn) {
+                if (navigator.share) {
+                    navigator.share({ title: "Check this post!", text: "See this cool post from RUBI STORE!", url: window.location.href });
+                } else {
+                    alert("Sharing is not supported on your browser.");
+                }
+                return;
+            }
+            
+            const postImage = target.closest('.post-image');
+            if (postImage) {
+                 document.getElementById('zoomedImage').src = postImage.src;
+                 document.getElementById('zoomOverlay').style.display = 'flex';
+                 return;
             }
         });
         
-        // --- TAB SWITCHING LOGIC (RESTORED) ---
+        // --- Page Navigation & Setup ---
+        document.getElementById('bottom-nav').addEventListener('click', (e) => {
+            const navItem = e.target.closest('.nav-item');
+            if (!navItem) return;
+            e.preventDefault();
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().catch(err => console.error("Scanner stop failed:", err));
+            }
+            const targetPageId = navItem.dataset.page;
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            navItem.classList.add('active');
+            document.querySelectorAll('.main-panel').forEach(panel => panel.classList.remove('active'));
+            const targetPage = document.getElementById(targetPageId);
+            targetPage.classList.add('active');
+
+            if (targetPageId === 'favorites-page') {
+                targetPage.querySelector('#favorite-apps-container').classList.add('active');
+                renderFavorites();
+            }
+            if (targetPageId === 'scanner-page') startScanner();
+            
+            document.getElementById('search-bar').value = '';
+            document.getElementById('search-bar').dispatchEvent(new Event('input'));
+        });
+        
         document.getElementById('content-tabs').addEventListener('click', (e) => {
             if (e.target.tagName === 'BUTTON') {
                 const targetTab = e.target.dataset.tab;
@@ -520,17 +567,83 @@
                 document.querySelectorAll('.app-list-panel').forEach(panel => panel.classList.remove('active'));
                 e.target.classList.add('active');
                 document.getElementById(targetTab).classList.add('active');
-                searchBar.dispatchEvent(new Event('input')); // Re-filter on tab change
+                document.getElementById('search-bar').dispatchEvent(new Event('input'));
+            }
+        });
+
+        function startScanner() {
+            const resultEl = document.getElementById('scanner-result');
+            resultEl.innerHTML = 'Starting camera...';
+            if (!html5QrCode) html5QrCode = new Html5Qrcode("scanner-reader");
+            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } },
+                (text) => {
+                    resultEl.innerHTML = text.startsWith('http') ? `<strong>Website Link</strong><br><a href="${text}" target="_blank">${text}</a>` : `<strong>Scan Result:</strong><br>${text}`;
+                    if (html5QrCode.isScanning) html5QrCode.stop();
+                })
+                .catch(err => { resultEl.textContent = `Scanner Error: ${err}`; });
+        }
+
+        // --- Profile Modal Logic ---
+        document.getElementById('profile-icon').addEventListener('click', () => { document.getElementById('profileModal').style.display = 'block'; });
+        document.getElementById('modal-close').addEventListener('click', () => { document.getElementById('profileModal').style.display = 'none'; });
+        document.getElementById('profile-pic-changer').addEventListener('click', () => document.getElementById('profile-pic-input').click());
+        document.getElementById('profile-pic-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    localStorage.setItem('profilePic', event.target.result);
+                    loadProfileFromStorage();
+                };
+                reader.readAsDataURL(file);
             }
         });
         
-        // Other Listeners and Page Navigation (mostly unchanged)
-        zoomOverlay.addEventListener('click', () => zoomOverlay.style.display = 'none');
-        qrZoomOverlay.addEventListener('click', () => qrZoomOverlay.style.display = 'none');
-        searchBar.addEventListener('input', (e) => {
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formResult = document.getElementById('form-result');
+            const saveBtn = this.querySelector('.save-btn');
+            saveBtn.disabled = true;
+            formResult.textContent = "Submitting...";
+
+            const username = document.getElementById('username').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('phone', phone);
+            formData.append('address', address);
+            formData.append('access_key', WEB3FORMS_ACCESS_KEY);
+            formData.append('subject', 'New Profile Submission from App Store');
+
+            try {
+                const response = await fetch("https://api.web3forms.com/submit", { method: "POST", body: formData });
+                const result = await response.json();
+                if (result.success) {
+                    formResult.style.color = 'green';
+                    formResult.textContent = "Profile updated successfully!";
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('phone', phone);
+                    localStorage.setItem('address', address);
+                    loadProfileFromStorage();
+                    setTimeout(() => { document.getElementById('profileModal').style.display = 'none'; formResult.textContent = ''; }, 2000);
+                } else {
+                    formResult.style.color = 'red';
+                    formResult.textContent = result.message || "An error occurred.";
+                }
+            } catch (error) {
+                formResult.style.color = 'red';
+                formResult.textContent = "An error occurred during submission.";
+            } finally {
+                saveBtn.disabled = false;
+            }
+        });
+        
+        // --- Accessibility & Other Listeners ---
+        document.getElementById('search-bar').addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase().trim();
             if (document.getElementById('apps-page').classList.contains('active')) {
-                document.querySelectorAll('.app-item').forEach(item => {
+                document.querySelectorAll('#apps-page .app-item').forEach(item => {
                     const match = item.dataset.title.includes(term) || item.dataset.subtitle.includes(term);
                     item.style.display = match ? 'flex' : 'none';
                 });
@@ -538,177 +651,47 @@
                 document.querySelectorAll('#work-page .post-card').forEach(post => {
                     post.style.display = post.dataset.name.toLowerCase().includes(term) ? 'flex' : 'none';
                 });
-            }
-        });
-        bottomNav.addEventListener('click', (e) => {
-            const navItem = e.target.closest('.nav-item');
-            if (!navItem) return;
-            e.preventDefault();
-            if (html5QrCode && html5QrCode.isScanning) {
-                 html5QrCode.stop().catch(err => console.log("Scanner failed to stop."));
-            }
-            const targetPageId = navItem.dataset.page;
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            navItem.classList.add('active');
-            document.querySelectorAll('.main-panel').forEach(panel => panel.classList.remove('active'));
-            document.getElementById(targetPageId).classList.add('active');
-            if (targetPageId === 'favorites-page') renderFavorites();
-            if (targetPageId === 'scanner-page') startScanner();
-            searchBar.value = '';
-            searchBar.dispatchEvent(new Event('input'));
-        });
-        
-        // --- SCANNER LOGIC (RESTORED) ---
-        function startScanner() {
-            const resultEl = document.getElementById('scanner-result');
-            resultEl.innerHTML = 'Starting camera...';
-            html5QrCode = new Html5Qrcode("scanner-reader");
-            const onScanSuccess = (text, result) => {
-                if (text.startsWith('WIFI:')) {
-                    const ssid = text.match(/S:([^;]+);/);
-                    const pass = text.match(/P:([^;]+);/);
-                    resultEl.innerHTML = `<strong>Wi-Fi Network</strong><br>SSID: ${ssid ? ssid[1] : 'N/A'}<br>Password: ${pass ? pass[1] : 'N/A'}`;
-                } else if (text.startsWith('http')) {
-                    resultEl.innerHTML = `<strong>Website Link</strong><br><a href="${text}" target="_blank">${text}</a>`;
-                } else {
-                    resultEl.innerHTML = `<strong>Scan Result:</strong><br>${text}`;
-                }
-                if (html5QrCode.isScanning) html5QrCode.stop();
-            };
-            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess)
-                .catch(err => { resultEl.textContent = `Scanner Error: ${err}`; });
-        }
-        
-        // --- PROFILE MODAL & FORM SUBMISSION (CORRECTED) ---
-        const profileForm = document.getElementById('profileForm');
-        const formResult = document.getElementById('form-result');
-        const profilePicInput = document.getElementById('profile-pic-input');
-
-        profileForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const saveBtn = profileForm.querySelector('.save-btn');
-            saveBtn.textContent = 'Submitting...';
-            saveBtn.disabled = true;
-            
-            const formData = new FormData(profileForm);
-            formData.append("access_key", WEB3FORMS_ACCESS_KEY);
-            formData.append("subject", "New Profile Submission from App Store");
-
-            const file = profilePicInput.files[0];
-            if (file) {
-                formData.append("attachment", file);
-            }
-
-            try {
-                const response = await fetch("https://api.web3forms.com/submit", {
-                    method: "POST",
-                    body: formData
+            } else if (document.getElementById('favorites-page').classList.contains('active')) {
+                document.querySelectorAll('#favorite-apps-container .app-item').forEach(item => {
+                    const match = item.dataset.title.includes(term) || item.dataset.subtitle.includes(term);
+                    item.style.display = match ? 'flex' : 'none';
                 });
-                const result = await response.json();
-                
-                if (result.success) {
-                    formResult.style.color = 'green';
-                    formResult.textContent = "Profile updated and submitted successfully!";
-                    localStorage.setItem('username', document.getElementById('username').value); 
-                    localStorage.setItem('phone', document.getElementById('phone').value); 
-                    localStorage.setItem('address', document.getElementById('address').value);
-                    loadProfileFromStorage();
-                } else {
-                    formResult.style.color = 'red';
-                    formResult.textContent = result.message || "An error occurred.";
-                }
-            } catch (error) {
-                console.error('Form submission error:', error);
-                formResult.style.color = 'red';
-                formResult.textContent = "An error occurred while submitting.";
-            } finally {
-                saveBtn.textContent = 'Save & Update Profile';
-                saveBtn.disabled = false;
-                setTimeout(() => { formResult.textContent = ''; }, 5000);
             }
         });
-        
-        // --- ACCESSIBILITY, PROFILE & INITIALIZATION (RESTORED & VERIFIED) ---
-        const profilePicChanger = document.getElementById('profile-pic-changer');
-        const modalClose = document.getElementById('modal-close');
-        profileIcon.addEventListener('click', () => { profileModal.style.display = 'block'; });
-        modalClose.addEventListener('click', () => { profileModal.style.display = 'none'; });
-        window.addEventListener('click', (e) => { if (e.target == profileModal) { profileModal.style.display = 'none'; } });
-        profilePicChanger.addEventListener('click', () => { profilePicInput.click(); });
-        profilePicInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const imageUrl = event.target.result;
-                    document.getElementById('profile-pic-display').src = imageUrl;
-                    document.getElementById('header-profile-pic').src = imageUrl;
-                    document.getElementById('header-profile-pic').style.display = 'block';
-                    document.getElementById('header-profile-icon-default').style.display = 'none';
-                    localStorage.setItem('profilePicDataUrl', imageUrl);
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        function loadProfileFromStorage() {
-            document.getElementById('username-display').textContent = localStorage.getItem('username') || 'Not Set';
-            document.getElementById('phone-display').textContent = localStorage.getItem('phone') || 'Not Set';
-            document.getElementById('address-display').textContent = localStorage.getItem('address') || 'Not Set';
-            document.getElementById('username').value = localStorage.getItem('username') || '';
-            document.getElementById('phone').value = localStorage.getItem('phone') || '';
-            document.getElementById('address').value = localStorage.getItem('address') || '';
-            const picDataUrl = localStorage.getItem('profilePicDataUrl');
-            const profilePicEl = document.getElementById('profile-pic-display');
-            const headerPicEl = document.getElementById('header-profile-pic');
-            const headerIconDefault = document.getElementById('header-profile-icon-default');
-            if (picDataUrl) {
-                profilePicEl.src = picDataUrl;
-                headerPicEl.src = picDataUrl;
-                headerPicEl.style.display = 'block';
-                headerIconDefault.style.display = 'none';
-            } else {
-                 headerPicEl.style.display = 'none';
-                 headerIconDefault.style.display = 'block';
-            }
-        }
-        
-        function loadSettingsFromStorage() {
-            const brightness = localStorage.getItem('appBrightness') || '0';
-            document.getElementById('brightness-slider').value = brightness;
-            document.getElementById('brightness-overlay').style.backgroundColor = `rgba(0,0,0,${brightness / 100})`;
-            const fontSize = localStorage.getItem('appFontSize');
-            if(fontSize) document.documentElement.style.fontSize = fontSize;
-        }
-
-        document.getElementById('brightness-slider').addEventListener('input', (e) => {
+        document.getElementById('brightness-slider').addEventListener('input', e => {
             const value = e.target.value;
             document.getElementById('brightness-overlay').style.backgroundColor = `rgba(0,0,0,${value / 100})`;
             localStorage.setItem('appBrightness', value);
         });
-
         document.getElementById('increase-font').addEventListener('click', () => {
-            let currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-            const newSize = `${currentSize + 1}px`;
+            let size = parseFloat(getComputedStyle(document.documentElement).fontSize);
+            const newSize = `${size + 1}px`;
             document.documentElement.style.fontSize = newSize;
             localStorage.setItem('appFontSize', newSize);
         });
-
         document.getElementById('decrease-font').addEventListener('click', () => {
-            let currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-            if(currentSize > 12) {
-                const newSize = `${currentSize - 1}px`;
+            let size = parseFloat(getComputedStyle(document.documentElement).fontSize);
+            if(size > 12) {
+                const newSize = `${size - 1}px`;
                 document.documentElement.style.fontSize = newSize;
                 localStorage.setItem('appFontSize', newSize);
             }
         });
+        document.getElementById('zoomOverlay').addEventListener('click', () => document.getElementById('zoomOverlay').style.display = 'none');
+        document.getElementById('qr-zoom-overlay').addEventListener('click', () => document.getElementById('qr-zoom-overlay').style.display = 'none');
+        window.addEventListener('click', (e) => { if (e.target == document.getElementById('profileModal')) { document.getElementById('profileModal').style.display = 'none'; } });
         
+        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            loadFromStorage();
-            renderApps();
-            updateWorkPageFavoriteIcons();
+            loadFavoritesFromStorage();
             loadProfileFromStorage();
-            loadSettingsFromStorage();
+            renderApps(appsData);
+            const savedBrightness = localStorage.getItem('appBrightness') || '0';
+            document.getElementById('brightness-slider').value = savedBrightness;
+            document.getElementById('brightness-overlay').style.backgroundColor = `rgba(0,0,0,${savedBrightness / 100})`;
+            const savedFontSize = localStorage.getItem('appFontSize');
+            if(savedFontSize) document.documentElement.style.fontSize = savedFontSize;
+            
             setInterval(() => document.querySelectorAll('.post-time-live').forEach(el => { el.textContent = new Date().toLocaleTimeString(); }), 1000);
         });
     </script>
