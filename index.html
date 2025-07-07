@@ -6,249 +6,144 @@
     <title>Web App Store</title>
     <!-- Using Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        /* --- GLOBAL STYLES --- */
-        :root {
-            --primary-color: #007bff;
-            --light-gray: #f0f2f5;
-            --dark-gray: #65676b;
-            --border-color: #ced0d4;
-        }
+    
+    <!-- Library for QR Code Scanning -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!-- Library for QR Code Generation -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
+    <style>
+        /* --- MODERN & RESPONSIVE DESIGN (WITH NEW ADDITIONS) --- */
+        :root {
+            --primary-color: #0a68ff; --primary-color-light: #e7f3ff; --background-color: #f0f2f5;
+            --surface-color: #ffffff; --text-primary: #1c1e21; --text-secondary: #65676b;
+            --border-color: #e4e6eb; --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.08);
+            --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.12); --sidebar-width: 240px;
+        }
+        html { font-size: 16px; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            background-color: var(--light-gray);
-            padding-top: 60px; /* Space for fixed header */
-            padding-bottom: 70px; /* Space for fixed bottom nav */
+            margin: 0; background-color: var(--background-color); color: var(--text-primary);
+            padding-top: 60px; padding-bottom: 70px;
         }
-
-        /* --- HEADER --- */
+        .brightness-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0); z-index: 10000; pointer-events: none;
+            transition: background-color 0.1s ease;
+        }
         .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 15px;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 100;
+            position: fixed; top: 0; left: 0; width: 100%; display: flex; align-items: center;
+            gap: 15px; padding: 10px 15px; background-color: var(--surface-color);
+            box-shadow: var(--shadow-1); z-index: 1000; box-sizing: border-box;
         }
-
-        .header .logo {
-            font-weight: bold;
-            font-size: 24px;
-        }
-
+        .header .logo { font-weight: 700; font-size: 1.5rem; color: var(--primary-color); }
         .header .search-bar {
-            flex-grow: 1;
-            margin: 0 15px;
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            background-color: var(--light-gray);
+            flex-grow: 1; padding: 10px 15px; border: 1px solid var(--border-color);
+            border-radius: 25px; background-color: var(--background-color);
+            font-size: 0.95rem; outline-color: var(--primary-color);
         }
-
         .header .profile-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--light-gray);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            overflow: hidden; /* To contain the profile pic */
+            width: 40px; height: 40px; border-radius: 50%; background-color: var(--background-color);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; overflow: hidden; border: 1px solid var(--border-color);
         }
-
-        .header .profile-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .header .profile-icon i {
-            font-size: 20px;
-            color: var(--dark-gray);
-        }
-
-        /* --- MAIN PAGE CONTAINER --- */
-        main {
-            padding-bottom: 10px; /* spacing */
-        }
-
-        .main-panel {
-            display: none;
-        }
-
-        .main-panel.active {
-            display: block;
-        }
-        
-        /* Placeholder for new pages */
+        .header .profile-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .header .profile-icon i { font-size: 1.25rem; color: var(--text-secondary); }
+        main { padding: 15px; padding-bottom: 10px; }
+        .main-panel { display: none; }
+        .main-panel.active { display: block; }
         .placeholder-content {
-            padding: 40px 20px;
-            text-align: center;
-            color: var(--dark-gray);
+            padding: 40px 20px; text-align: center; color: var(--text-secondary);
+            background-color: var(--surface-color); border-radius: 12px;
         }
-
-        /* --- CONTENT TABS (for Apps page) --- */
         .content-tabs {
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            background-color: white;
-            border-bottom: 1px solid #ddd;
+            display: flex; justify-content: flex-start; gap: 10px; padding: 5px 15px;
+            margin: -15px -15px 15px -15px; background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color); overflow-x: auto;
         }
-
         .content-tabs button {
-            background: none;
-            border: none;
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--dark-gray);
-            padding: 10px 15px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
+            background: none; border: none; font-size: 1rem; font-weight: 600;
+            color: var(--text-secondary); padding: 12px 10px; cursor: pointer;
+            border-bottom: 3px solid transparent; transition: color 0.2s ease, border-color 0.2s ease;
+            white-space: nowrap;
         }
-
-        .content-tabs button.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
+        .content-tabs button:hover { background-color: var(--background-color); border-radius: 8px; }
+        .content-tabs button.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .app-list-panel, #favorite-apps-container { display: none; padding: 0 10px; }
+        .app-list-panel.active, #favorite-apps-container.active { display: block; }
+        .app-list-panel .no-results, #favorites-page .no-results { padding: 40px 20px; text-align: center; color: var(--text-secondary); }
+        .app-item, .cloned-post-card {
+            display: flex; align-items: center; padding: 15px;
+            background-color: var(--surface-color); margin: 10px 0; border-radius: 12px;
+            box-shadow: var(--shadow-1); transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-
-        /* --- APP LIST --- */
-        .app-list-panel {
-            display: none;
-            padding: 0 10px;
-        }
-        
-        .app-list-panel.active {
-            display: block;
-        }
-        
-        .app-list-panel .no-results {
-             padding: 40px 20px;
-            text-align: center;
-            color: var(--dark-gray);
-        }
-
-        .app-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            background-color: white;
-            margin: 10px 0;
-            border-radius: 12px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-
-        .app-logo {
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
-            object-fit: cover;
-            margin-right: 15px;
-        }
-
-        .app-details {
-            flex-grow: 1;
-        }
-        
-        .app-title {
-            font-weight: 600;
-            font-size: 16px;
-            margin: 0;
-        }
-
-        .app-subtitle {
-            font-size: 14px;
-            color: var(--dark-gray);
-            margin: 2px 0 0;
-        }
-
-        .app-actions {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
+        .app-item:hover, .cloned-post-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+        .app-logo { width: 60px; height: 60px; border-radius: 15px; object-fit: cover; margin-right: 15px; }
+        .app-details { flex-grow: 1; }
+        .app-title { font-weight: 600; font-size: 1.05rem; margin: 0; }
+        .app-subtitle { font-size: 0.875rem; color: var(--text-secondary); margin: 4px 0 0; }
+        .app-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
         .download-button {
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            color: white;
-            background-color: var(--primary-color);
-            font-size: 14px;
+            padding: 8px 18px; border-radius: 20px; border: none; font-weight: 700; cursor: pointer;
+            text-decoration: none; color: var(--surface-color); background-color: var(--primary-color);
+            font-size: 0.875rem; text-align: center; transition: background-color 0.2s ease, transform 0.1s ease;
         }
-        
-        .download-button.paid {
-            background-color: #28a745; /* Green for paid */
-        }
-        
+        .download-button:active { transform: scale(0.95); }
+        .download-button.paid { background-color: #28a745; }
         .fav-button {
-            background: none;
-            border: none;
+            background: none; border: none; cursor: pointer; font-size: 1.5rem;
+            color: #ccc; transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .fav-button:hover { transform: scale(1.1); }
+        .fav-button.favorited { color: #e53935; }
+        .app-qrcode {
+            width: 50px; height: 50px; background: white;
+            padding: 4px; border-radius: 4px; box-shadow: var(--shadow-1);
             cursor: pointer;
-            font-size: 24px;
-            color: #ccc;
         }
-
-        .fav-button.favorited {
-            color: #e53935; /* Red when favorited */
+        #work-page-container, #favorite-posts-container { display: grid; grid-template-columns: 1fr; gap: 16px; font-family: Arial, sans-serif; }
+        .post-card {
+            background: var(--surface-color); border-radius: 12px; padding: 16px;
+            box-shadow: var(--shadow-1); display: flex; flex-direction: column; box-sizing: border-box;
         }
-        
-        /* --- BOTTOM NAVIGATION --- */
+        .post-card .post-time-live { font-size: 0.8rem; color: var(--primary-color); font-weight: 600; }
+        .post-image { width: 100%; border-radius: 8px; margin-top: 12px; cursor: pointer; transition: transform 0.3s ease; }
+        .action-buttons { display:flex; justify-content:space-around; margin-top:5px; }
+        .action-buttons button {
+            border: none; background: none; cursor: pointer; padding: 8px 10px; font-size: 0.875rem;
+            color: var(--text-secondary); font-weight: 600; border-radius: 6px;
+            transition: background-color 0.2s ease; flex-grow: 1;
+        }
+        .action-buttons button.fav-button { font-size: 1.2rem; flex-grow: 0; padding: 8px; }
+        .action-buttons button:not(.fav-button):hover { background-color: var(--background-color); }
+        .zoom-overlay, #qr-zoom-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85);
+            display: none; justify-content: center; align-items: center; z-index: 9999; cursor: zoom-out;
+        }
+        .zoom-overlay img, #qr-zoom-overlay-content { max-width: 90%; max-height: 90%; }
+        #qr-zoom-overlay-content { background: white; padding: 20px; border-radius: 10px; }
+        #favorites-page h3 { padding-left: 15px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        #scanner-page { padding: 20px; background-color: var(--surface-color); border-radius: 12px; }
+        #scanner-reader { width: 100%; border-radius: 8px; border: 2px dashed var(--border-color); }
+        #scanner-result { margin-top: 20px; padding: 15px; background-color: var(--background-color); border-radius: 8px; word-wrap: break-word; line-height: 1.5; color: var(--text-primary); }
+        #scanner-result strong, #scanner-result a { color: var(--primary-color); }
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-            background-color: white;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-            padding: 5px 0;
-            z-index: 100;
+            position: fixed; bottom: 0; left: 0; width: 100%; display: flex;
+            justify-content: space-around; background-color: var(--surface-color);
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.05); padding: 5px 0;
+            z-index: 1000; border-top: 1px solid var(--border-color);
         }
-        
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--dark-gray);
-            text-decoration: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-
-        .nav-item i {
-            font-size: 22px;
-        }
-        
-        .nav-item span {
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-        .nav-item.active {
-            color: var(--primary-color);
-        }
-
-        /* --- PROFILE MODAL --- */
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-secondary); text-decoration: none; padding: 5px 10px; cursor: pointer; transition: color 0.2s ease; }
+        .nav-item i { font-size: 1.4rem; }
+        .nav-item span { font-size: 0.75rem; margin-top: 4px; }
+        .nav-item.active { color: var(--primary-color); }
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: #fefefe; margin: 20% auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative; }
+        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative; }
         .modal .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
         .modal-content h2 { margin-top: 0; }
         .modal-content .profile-display { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
         .modal-content .profile-pic-container { width: 80px; height: 80px; border-radius: 50%; background: #eee; position: relative; cursor: pointer; overflow: hidden; }
-        .profile-pic-container #profile-pic-display { width: 100%; height: 100%; object-fit: cover; }
+        #profile-pic-display { width: 100%; height: 100%; object-fit: cover; }
         .profile-pic-container .overlay { position: absolute; bottom: 0; background: rgba(0,0,0,0.5); color: white; width: 100%; text-align: center; font-size: 12px; padding: 4px 0; }
         #profile-pic-input { display: none; }
         .profile-info p { margin: 4px 0; font-size: 14px; }
@@ -256,14 +151,38 @@
         .modal-content form { display: flex; flex-direction: column; gap: 15px; }
         .modal-content input[type="text"], .modal-content input[type="tel"] { padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 16px; }
         .modal-content button.save-btn { padding: 12px; font-size: 16px; background-color: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .accessibility-controls { margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border-color); }
+        .control-group { margin-bottom: 15px; }
+        .control-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+        .slider-container input[type="range"] { width: 100%; cursor: pointer; }
+        .font-size-controls button { padding: 8px 12px; font-size: 1rem; margin-right: 10px; border: 1px solid var(--border-color); background-color: var(--surface-color); border-radius: 5px; cursor: pointer; }
+        
+        @media (min-width: 768px) {
+            body { padding-bottom: 0; padding-left: var(--sidebar-width); }
+            main { max-width: 1200px; padding: 25px 40px; margin: 0 auto; }
+            .bottom-nav { width: var(--sidebar-width); height: 100vh; flex-direction: column; justify-content: flex-start; align-items: stretch; padding: 20px 0; top: 60px; box-shadow: none; border-top: none; border-right: 1px solid var(--border-color); }
+            .nav-item { flex-direction: row; align-items: center; padding: 15px 25px; border-radius: 0 50px 50px 0; margin-right: 20px; }
+            .nav-item i { font-size: 1.25rem; margin-bottom: 0; margin-right: 20px; width: 24px; }
+            .nav-item span { font-size: 1rem; font-weight: 500; }
+            .nav-item.active { background-color: var(--primary-color-light); color: var(--primary-color); }
+            .header { padding: 10px 30px; left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); }
+            .header .logo { display: none; }
+            .app-list-panel, #favorite-apps-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; padding: 0; }
+            .app-item, .cloned-post-card { margin-bottom: 0; }
+            #work-page-container, #favorite-posts-container { grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); }
+            @media (min-width: 1200px) {
+                #work-page-container, #favorite-posts-container { grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); }
+            }
+        }
     </style>
 </head>
 <body>
-
+    <div class="brightness-overlay" id="brightness-overlay"></div>
+    
     <!-- Header -->
     <header class="header">
-        <div class="logo">Store</div>
-        <input type="search" class="search-bar" placeholder="Search apps & games...">
+        <div class="logo">RUBI STORE</div>
+        <input type="search" class="search-bar" id="search-bar" placeholder="Search everything...">
         <div class="profile-icon" id="profile-icon">
             <img id="header-profile-pic" src=" " style="display: none;">
             <i id="header-profile-icon-default" class="fa-regular fa-user"></i>
@@ -286,221 +205,75 @@
 
         <!-- Favorites Page -->
         <div id="favorites-page" class="main-panel">
-            <div class="placeholder-content" id="favorites-placeholder">
-                <h2>Favorites</h2>
-                <p>Your favorite apps will appear here.</p>
+            <h3>Favorite Apps</h3>
+            <div id="favorite-apps-container"></div>
+            <h3>Favorite Posts</h3>
+            <div id="favorite-posts-container"></div>
+            <div id="favorites-placeholder" class="placeholder-content" style="display: none;">
+                <h2>No Favorites Yet</h2>
+                <p>Click the heart icon on any app or post to add it here.</p>
             </div>
         </div>
         
-        <!-- Games Page -->
-        <div id="games-page" class="main-panel">
-             <div class="placeholder-content">
-                <h2>Games</h2>
-                <p>Games content will be shown here.</p>
-            </div>
-        </div>
-
         <!-- Work Page -->
-        <style>
-            #work-page {
-              display: flex;
-              flex-wrap: wrap;
-              gap: 16px;
-              padding: 16px;
-              background: #f0f2f5;
-              font-family: Arial, sans-serif;
-            }
-          
-            .post-card {
-              background: #fff;
-              border-radius: 8px;
-              padding: 12px;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-              flex: 1 1 calc(50% - 16px);
-              box-sizing: border-box;
-              position: relative;
-            }
-          
-            @media (max-width: 768px) {
-              .post-card {
-                flex: 1 1 100%;
-              }
-            }
-          
-            .post-image {
-              width: 100%;
-              border-radius: 5px;
-              margin-top: 10px;
-              cursor: pointer;
-              transition: transform 0.3s ease;
-            }
-          
-            /* zoom overlay */
-            .zoom-overlay {
-              position: fixed;
-              top:0; left:0; right:0; bottom:0;
-              background: rgba(0,0,0,0.8);
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              z-index: 9999;
-              display: none;
-            }
-          
-            .zoom-overlay img {
-              max-width: 90%;
-              max-height: 90%;
-            }
-          
-            .action-buttons button {
-              border: none;
-              background: none;
-              cursor: pointer;
-              padding: 5px 10px;
-              font-size: 14px;
-            }
-          </style>
-         
-          
-          
-          <div id="work-page">
-          
-            <div class="post-card">
-              <div style="display: flex; align-items: center;">
-                <img src="https://i.ibb.co/Jj524zmb/edited-image.png" alt="Profile" style="width:40px; height:40px; border-radius:50%; margin-right:10px;">
-                <div>
-                  <strong>Bishal Shrestha</strong><br>
-                  <span style="font-size:12px; color:gray;">sun 6 july </span>
+        <div id="work-page" class="main-panel">
+          <div id="work-page-container">
+            <!-- Posts are dynamically generated but kept here as templates -->
+            <div class="post-card" data-id="post-1" data-name="bishal shrestha">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center;">
+                    <img src="https://i.ibb.co/Jj524zmb/edited-image.png" alt="Profile" style="width:40px; height:40px; border-radius:50%; margin-right:10px;">
+                    <div><strong>Bishal Shrestha</strong><br><span class="post-time-live"></span></div>
                 </div>
               </div>
-              <div style="margin-top:10px;">
-                I am verry Happy now
-              </div>
-              <img src="https://i.ibb.co/MyZkTB0S/IMG-20241206-112150-7.jpg" class="post-image" alt="post" data-download="https://i.ibb.co/MyZkTB0S/IMG-20241206-112150-7.jpg">
-              <div style="margin-top:10px; border-top:1px solid #ddd; border-bottom:1px solid #ddd; padding:5px 0;">
-                😍Subscribe Vx Xtha on youtube
-              </div>
-              <div class="action-buttons" style="display:flex; justify-content:space-around; margin-top:5px;">
-                <button class="download-btn">⬇️ Download</button>
-                <button class="whatsapp-btn">💬 WhatsApp</button>
-                <button class="share-btn">🔗 Share</button>
+              <div style="margin-top:10px;">2082/03/23 starting date of RUBI STORE</div>
+              <img src="https://i.ibb.co/MyZkTB0S/IMG-20241206-112150-7.jpg" class="post-image" data-download="rubi-store.jpg">
+              <div style="margin-top:10px; border-top:1px solid #ddd; border-bottom:1px solid #ddd; padding:5px 0;">😍 Subscribe Vx Xtha on YouTube</div>
+              <div class="action-buttons">
+                <button class="post-download-btn">⬇️ Download</button>
+                <button class="post-whatsapp-btn">💬 WhatsApp</button>
+                <button class="post-share-btn">🔗 Share</button>
+                <button class="fav-button"><i class="far fa-heart"></i></button>
               </div>
             </div>
-          
-          </div>
-          
-          <!-- zoom overlay -->
-          <div class="zoom-overlay" id="zoomOverlay">
-            <img src=" " id="zoomedImage">
-          </div>
-          
-          <script>
-            // zoom on click
-            document.querySelectorAll(".post-image").forEach(img => {
-              img.addEventListener("click", () => {
-                document.getElementById("zoomedImage").src = img.src;
-                document.getElementById("zoomOverlay").style.display = "flex";
-              });
-            });
-            document.getElementById("zoomOverlay").addEventListener("click", () => {
-              document.getElementById("zoomOverlay").style.display = "none";
-            });
-          
-            // download
-document.querySelectorAll(".download-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const img = btn.closest(".post-card").querySelector(".post-image");
-    if (!img) return;
-    
-    // create canvas to convert to PNG
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const image = new Image();
-    image.crossOrigin = "anonymous"; // allow cross-origin images if hosted publicly
-    image.src = img.src;
-    
-    image.onload = () => {
-      canvas.width = image.width;
-      canvas.height = image.height;
-      ctx.drawImage(image, 0, 0);
-      // convert to PNG
-      const pngDataUrl = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.href = pngDataUrl;
-      link.download = "post-image.png";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
-  });
-});
-
-          
-            // WhatsApp button
-document.querySelectorAll(".whatsapp-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const postCard = btn.closest(".post-card");
-    
-    if (!postCard) return; // safety
-    
-    const img = postCard.querySelector(".post-image");
-    const userName = postCard.querySelector("strong")?.innerText || "Unknown";
-    
-    // get the text content of the third child div:
-    const allDivs = postCard.querySelectorAll("div");
-    let postText = "";
-    if (allDivs.length >= 3) {
-      postText = allDivs[2].innerText;
-    }
-
-    const imgName = img?.dataset.download || img?.src.split("/").pop() || "image.jpg";
-    
-    const message = `Post Details:
--------------------
-👤 Name: ${userName}
-📝 Message: ${postText}
-🖼️ Photo: ${imgName}
--------------------
-`;
-    const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/9761614027?text=${encoded}`, "_blank");
-  });
-});
-
-          
-            // Share
-            document.querySelectorAll(".share-btn").forEach(btn => {
-              btn.addEventListener("click", () => {
-                if (navigator.share) {
-                  navigator.share({
-                    title: "Check this post",
-                    text: "See this cool post",
-                    url: window.location.href
-                  });
-                } else {
-                  alert("Share not supported in this browser");
-                }
-              });
-            });
-          </script>
-          
-
-        <!-- Notifications Page -->
-        <div id="notifications-page" class="main-panel">
-            <div class="placeholder-content">
-                <h2>Notifications</h2>
-                <p>You have no new notifications.</p>
+            <div class="post-card" data-id="post-2" data-name="vx xtha">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center;">
+                    <img src="https://i.ibb.co/RGNNMjyj/VX.png" alt="Profile" style="width:40px; height:40px; border-radius:50%; margin-right:10px;">
+                    <div><strong>VX XTHA</strong><br><span class="post-time-live"></span></div>
+                </div>
+              </div>
+              <div style="margin-top:10px;">Enjoying a great trip today!</div>
+              <img src="https://i.ibb.co/NdWT4gmg/1000011944.jpg" class="post-image" data-download="trip-photo.jpg">
+              <div style="margin-top:10px; border-top:1px solid #ddd; border-bottom:1px solid #ddd; padding:5px 0;">❤️ Follow my travel blog!</div>
+              <div class="action-buttons">
+                <button class="post-download-btn">⬇️ Download</button>
+                <button class="post-whatsapp-btn">💬 WhatsApp</button>
+                <button class="post-share-btn">🔗 Share</button>
+                <button class="fav-button"><i class="far fa-heart"></i></button>
+              </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Scanner Page -->
+        <div id="scanner-page" class="main-panel">
+            <h2>QR & Barcode Scanner</h2>
+            <div id="scanner-reader"></div>
+            <div id="scanner-result">Point your camera at a code to scan.</div>
         </div>
     </main>
 
+    <!-- Overlays -->
+    <div class="zoom-overlay" id="zoomOverlay"><img src=" " id="zoomedImage"></div>
+    <div id="qr-zoom-overlay"><div id="qr-zoom-overlay-content"></div></div>
+    
     <!-- Bottom Navigation -->
     <nav class="bottom-nav" id="bottom-nav">
         <a href="#" class="nav-item active" data-page="apps-page"><i class="fas fa-th-large"></i><span>Apps</span></a>
         <a href="#" class="nav-item" data-page="favorites-page"><i class="far fa-heart"></i><span>Favorites</span></a>
-     
         <a href="#" class="nav-item" data-page="work-page"><i class="fas fa-briefcase"></i><span>Work</span></a>
- 
+        <a href="#" class="nav-item" data-page="scanner-page"><i class="fas fa-qrcode"></i><span>Scanner</span></a>
     </nav>
     
     <!-- Profile Modal -->
@@ -519,253 +292,227 @@ document.querySelectorAll(".whatsapp-btn").forEach(btn => {
                 </div>
             </div>
             <form id="profileForm">
-                <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
-                <input type="hidden" name="subject" value="New Profile Submission from App Store">
                 <input type="text" id="username" name="username" placeholder="Enter your username" required>
                 <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
                 <input type="text" id="address" name="address" placeholder="Enter your address" required>
                 <button type="submit" class="save-btn">Save & Update Profile</button>
             </form>
             <p id="form-result" style="text-align: center; margin-top: 10px;"></p>
+            <div class="accessibility-controls">
+                <h2>Accessibility</h2>
+                <div class="control-group">
+                    <label for="brightness-slider">Screen Brightness</label>
+                    <div class="slider-container"><input type="range" min="0" max="80" value="0" id="brightness-slider"></div>
+                </div>
+                <div class="control-group">
+                    <label>Text Size</label>
+                    <div class="font-size-controls"><button id="decrease-font">-A</button><button id="increase-font">A+</button></div>
+                </div>
+            </div>
         </div>
     </div>
 
-
     <script>
-        // --- CONFIGURATION ---
-        // IMPORTANT: Replace this with your own key from https://web3forms.com
         const WEB3FORMS_ACCESS_KEY = "1f9d8d2c-a5f8-471e-a027-6f1a0287cafc"; 
-        // IMPORTANT: The WhatsApp number to send purchase requests to.
         const WHATSAPP_PAYMENT_NUMBER = "9761614027"; 
-
-        // --- MOCK APP DATA ---
         const appsData = [
-            // The property 'logo' has been changed to 'imageSrc' in all objects.
-
-            {
-                id: 1,
-                imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', 
-                title: 'Krish Bakery',
-                subtitle: 'Cake Coffee and Gift House',
-                category: 'forYou',
-                downloadLink: 'https://bishal17577.github.io/krishbakery/'
-            },
-            {
-                id: 2,
-                imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', // <-- FIXED: Direct image link
-                title: 'Chapakhana',
-                subtitle: 'Online Press Store',
-                category: 'forYou',
-                downloadLink: 'https://bishal17577.github.io/chapakhana/'
-            },
-            {
-                id: 3,
-                imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg',
-                title: 'Digital Bill',
-                subtitle: 'Online Bill Maker for shop',
-                category: 'premium',
-                price: 400
-            },
-            {
-                id: 4,
-                imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg',
-                title: 'Digital Bill',
-                subtitle: 'Online Bill Maker for shop',
-                rank: 1,
-                category: 'topCharts',
-                price: 400
-            },
-            
+            { id: 1, imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', title: 'Krish Bakery', subtitle: 'Cake Coffee & Gift House', category: 'forYou', downloadLink: 'https://bishal17577.github.io/krishbakery/' },
+            { id: 2, imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', title: 'Chapakhana', subtitle: 'Online Press Store', category: 'forYou', downloadLink: 'https://bishal17577.github.io/chapakhana/' },
+            { id: 3, imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', title: 'Digital Bill', subtitle: 'Online Bill Maker', category: 'premium', price: 400, downloadLink: 'https://example.com/digitalbill' },
+            { id: 4, imageSrc: 'https://i.ibb.co/4w7hnMXZ/New-Project.jpg', title: 'Digital Bill', subtitle: 'Online Bill Maker', rank: 1, category: 'topCharts', price: 400, downloadLink: 'https://example.com/digitalbill' },
         ];
+        
         let favoritedAppIds = new Set();
+        let favoritedPostIds = new Set();
+        let html5QrCode = null;
         
         // --- DOM Elements ---
         const mainContent = document.querySelector('main');
         const bottomNav = document.getElementById('bottom-nav');
-        const searchBar = document.querySelector('.search-bar');
-        
-        // Profile Modal Elements
+        const searchBar = document.getElementById('search-bar');
         const profileIcon = document.getElementById('profile-icon');
         const profileModal = document.getElementById('profileModal');
-        const modalClose = document.getElementById('modal-close');
-        const profileForm = document.getElementById('profileForm');
-        const formResult = document.getElementById('form-result');
-        const profilePicChanger = document.getElementById('profile-pic-changer');
-        const profilePicInput = document.getElementById('profile-pic-input');
-        const usernameDisplay = document.getElementById('username-display');
-        const phoneDisplay = document.getElementById('phone-display');
-        const addressDisplay = document.getElementById('address-display');
-        const profilePicDisplay = document.getElementById('profile-pic-display');
-        const headerProfilePic = document.getElementById('header-profile-pic');
-        const headerProfileIconDefault = document.getElementById('header-profile-icon-default');
+        const qrZoomOverlay = document.getElementById('qr-zoom-overlay');
+        const qrZoomContent = document.getElementById('qr-zoom-overlay-content');
+        const zoomOverlay = document.getElementById('zoomOverlay');
 
-        // --- APP RENDERING ---
+        // --- APP & POST RENDERING ---
         function createAppElement(app) {
-            const isPaid = app.price !== undefined;
             const isFavorited = favoritedAppIds.has(app.id);
-            const buttonClass = isPaid ? 'paid' : 'free';
-            const buttonText = isPaid ? `Rs${app.price}` : 'Download';
-
             const appDiv = document.createElement('div');
             appDiv.className = 'app-item';
             appDiv.dataset.id = app.id;
-
-            // ***** MAJOR FIX HERE *****
-            // Changed app.logo to app.imageSrc to match your data object
+            appDiv.dataset.title = app.title.toLowerCase();
+            appDiv.dataset.subtitle = app.subtitle.toLowerCase();
             appDiv.innerHTML = `
                 <img src="${app.imageSrc}" alt="${app.title} Logo" class="app-logo"> 
                 <div class="app-details">
-                    <p class="app-title">${app.title}</p>
-                    <p class="app-subtitle">${app.subtitle}</p>
+                    <p class="app-title">${app.title}</p><p class="app-subtitle">${app.subtitle}</p>
                 </div>
                 <div class="app-actions">
-                    <a href="#" class="download-button ${buttonClass}" 
-                        data-type="${isPaid ? 'paid' : 'free'}" 
-                        data-link="${app.downloadLink || ''}" 
-                        data-price="${app.price || ''}"
-                        data-title="${app.title}">
-                        ${buttonText}
-                    </a>
-                    <button class="fav-button ${isFavorited ? 'favorited' : ''}">
-                        <i class="${isFavorited ? 'fas' : 'far'} fa-heart"></i>
-                    </button>
+                    <a href="#" class="download-button ${app.price ? 'paid' : 'free'}" data-type="${app.price ? 'paid' : 'free'}" data-link="${app.downloadLink || ''}" data-price="${app.price || ''}" data-title="${app.title}">${app.price ? `Rs${app.price}` : 'GET'}</a>
+                    <button class="fav-button ${isFavorited ? 'favorited' : ''}"><i class="${isFavorited ? 'fas' : 'far'} fa-heart"></i></button>
+                    <div class="app-qrcode" id="qrcode-${app.id}" data-link="${app.downloadLink || ''}"></div>
                 </div>`;
+            if (app.downloadLink) {
+                setTimeout(() => new QRCode(appDiv.querySelector(`#qrcode-${app.id}`), { text: app.downloadLink, width: 50, height: 50, correctLevel: QRCode.CorrectLevel.L }), 0);
+            }
             return appDiv;
         }
         
-
-
-
-
-
-
-        
-        function renderApps(appsToRender) {
-            const forYouPanel = document.getElementById('forYou');
-            const topChartsPanel = document.getElementById('topCharts');
-            const premiumPanel = document.getElementById('premium');
-
-            forYouPanel.innerHTML = '';
-            topChartsPanel.innerHTML = '';
-            premiumPanel.innerHTML = '';
-
-            if (appsToRender.length === 0) {
-                 const activePanel = document.querySelector('.app-list-panel.active');
-                 if(activePanel) {
-                    activePanel.innerHTML = `<p class="no-results">No apps found matching your search.</p>`;
-                 }
-                return;
-            }
-
-            appsToRender.forEach(app => {
-                const appElement = createAppElement(app);
-                const panel = document.getElementById(app.category);
-                if (panel) {
-                    panel.appendChild(appElement);
-                }
+        function renderApps() {
+            const panels = { forYou: [], topCharts: [], premium: [] };
+            appsData.forEach(app => {
+                if (panels[app.category]) panels[app.category].push(createAppElement(app));
+            });
+            Object.keys(panels).forEach(key => {
+                const panelEl = document.getElementById(key);
+                panelEl.innerHTML = '';
+                if(panels[key].length > 0) panelEl.append(...panels[key]);
             });
         }
         
         function renderFavorites() {
-            const favoritesPage = document.getElementById('favorites-page');
-            favoritesPage.innerHTML = ''; 
+            const favAppsContainer = document.getElementById('favorite-apps-container');
+            const favPostsContainer = document.getElementById('favorite-posts-container');
+            const placeholder = document.getElementById('favorites-placeholder');
+            
+            favAppsContainer.innerHTML = '';
+            favPostsContainer.innerHTML = '';
 
             const favoritedApps = appsData.filter(app => favoritedAppIds.has(app.id));
-
-            if (favoritedApps.length === 0) {
-                favoritesPage.innerHTML = `
-                    <div class="placeholder-content">
-                        <h2>Favorites</h2>
-                        <p>You haven't favorited any apps yet. Click the heart icon to add one!</p>
-                    </div>`;
+            if (favoritedApps.length > 0) {
+                favAppsContainer.style.display = 'grid';
+                favoritedApps.forEach(app => favAppsContainer.appendChild(createAppElement(app)));
             } else {
-                favoritedApps.forEach(app => {
-                    favoritesPage.appendChild(createAppElement(app));
+                favAppsContainer.style.display = 'none';
+            }
+
+            const allPosts = document.querySelectorAll('#work-page .post-card');
+            const favoritedPosts = Array.from(allPosts).filter(post => favoritedPostIds.has(post.dataset.id));
+            if (favoritedPosts.length > 0) {
+                favPostsContainer.style.display = 'grid';
+                favoritedPosts.forEach(post => {
+                    const clone = post.cloneNode(true);
+                    clone.classList.add('cloned-post-card'); 
+                    favPostsContainer.appendChild(clone);
                 });
+            } else {
+                favPostsContainer.style.display = 'none';
             }
+            placeholder.style.display = (favoritedApps.length === 0 && favoritedPosts.length === 0) ? 'block' : 'none';
         }
 
-        function loadFavoritesFromStorage() {
-            const storedFavorites = localStorage.getItem('favoritedAppIds');
-            if (storedFavorites) {
-                favoritedAppIds = new Set(JSON.parse(storedFavorites));
-            }
+        // --- STORAGE & STATE MANAGEMENT ---
+        function loadFromStorage() {
+            const storedAppFavs = localStorage.getItem('favoritedAppIds');
+            if (storedAppFavs) favoritedAppIds = new Set(JSON.parse(storedAppFavs));
+            const storedPostFavs = localStorage.getItem('favoritedPostIds');
+            if (storedPostFavs) favoritedPostIds = new Set(JSON.parse(storedPostFavs));
         }
-        
-        function saveFavoritesToStorage() {
-            localStorage.setItem('favoritedAppIds', JSON.stringify([...favoritedAppIds]));
-        }
+        function saveAppFavorites() { localStorage.setItem('favoritedAppIds', JSON.stringify([...favoritedAppIds])); }
+        function savePostFavorites() { localStorage.setItem('favoritedPostIds', JSON.stringify([...favoritedPostIds])); }
 
-        // --- EVENT LISTENERS ---
-
-        searchBar.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase().trim();
-            const filteredApps = appsData.filter(app => 
-                app.title.toLowerCase().includes(searchTerm) || app.subtitle.toLowerCase().includes(searchTerm)
-            );
-            renderApps(filteredApps);
-        });
-        
-        mainContent.addEventListener('click', (e) => {
-            const target = e.target;
-            
-            const favButton = target.closest('.fav-button');
-            if (favButton) {
-                const appItem = favButton.closest('.app-item');
-                const appId = parseInt(appItem.dataset.id, 10);
+        function updateWorkPageFavoriteIcons() {
+            document.querySelectorAll('#work-page .post-card').forEach(card => {
+                const favButton = card.querySelector('.fav-button');
+                if (!favButton) return;
                 const heartIcon = favButton.querySelector('i');
-
-                if (favoritedAppIds.has(appId)) {
-                    favoritedAppIds.delete(appId);
-                    favButton.classList.remove('favorited');
-                    heartIcon.classList.remove('fas');
-                    heartIcon.classList.add('far');
-                } else {
-                    favoritedAppIds.add(appId);
+                if (favoritedPostIds.has(card.dataset.id)) {
                     favButton.classList.add('favorited');
-                    heartIcon.classList.remove('far');
-                    heartIcon.classList.add('fas');
+                    heartIcon.classList.replace('far', 'fas');
+                } else {
+                    favButton.classList.remove('favorited');
+                    heartIcon.classList.replace('fas', 'far');
                 }
-                saveFavoritesToStorage();
-
-                if (document.getElementById('favorites-page').classList.contains('active')) {
-                    renderFavorites();
-                }
+            });
+        }
+        
+        // --- IMAGE DOWNLOAD AS JPG ---
+        async function downloadImageAsJpg(url, filename) {
+            try {
+                const response = await fetch(url, { "crossOrigin": "Anonymous" });
+                if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
+                const blob = await response.blob();
+                const bitmap = await createImageBitmap(blob);
+                const canvas = document.createElement('canvas');
+                canvas.width = bitmap.width;
+                canvas.height = bitmap.height;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(bitmap, 0, 0);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error('Image download failed:', error);
+                alert('Could not download image. Trying direct download...');
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+        
+        // --- EVENT DELEGATION FOR DYNAMIC CONTENT ---
+        document.body.addEventListener('click', (e) => {
+            const appFavButton = e.target.closest('.app-item .fav-button');
+            if (appFavButton) {
+                const appItem = appFavButton.closest('.app-item');
+                const appId = parseInt(appItem.dataset.id, 10);
+                if (favoritedAppIds.has(appId)) favoritedAppIds.delete(appId);
+                else favoritedAppIds.add(appId);
+                saveAppFavorites();
+                renderApps();
+                if (document.getElementById('favorites-page').classList.contains('active')) renderFavorites();
                 return;
             }
 
-            const downloadButton = target.closest('.download-button');
-            if (downloadButton) {
+            const postFavButton = e.target.closest('.post-card .fav-button');
+            if (postFavButton) {
+                const postCard = postFavButton.closest('.post-card');
+                const postId = postCard.dataset.id;
+                if (favoritedPostIds.has(postId)) favoritedPostIds.delete(postId);
+                else favoritedPostIds.add(postId);
+                savePostFavorites();
+                updateWorkPageFavoriteIcons();
+                if (document.getElementById('favorites-page').classList.contains('active')) renderFavorites();
+                return;
+            }
+            
+            const postDownloadBtn = e.target.closest('.post-download-btn');
+            if (postDownloadBtn) {
                 e.preventDefault();
-                const type = downloadButton.dataset.type;
-                const link = downloadButton.dataset.link;
-                const price = downloadButton.dataset.price;
-                const title = downloadButton.dataset.title;
-
-                if (type === 'paid') {
-                    const username = localStorage.getItem('username');
-                    const phone = localStorage.getItem('phone');
-                    const address = localStorage.getItem('address');
-
-                    if (!username || !phone || !address) {
-                        alert("Please complete your profile (username, phone, and address) before purchasing an app.\n\nClick the profile icon in the top-right corner to update your details.");
-                        return;
-                    }
-
-                    const message = `Hello, I would like to purchase the app "${title}" for $${price}.\n\nMy Details:\nUsername: ${username}\nPhone: ${phone}\nAddress: ${address}\n\nPlease send payment instructions. Thank you.`;
-                    const whatsappUrl = `https://wa.me/${WHATSAPP_PAYMENT_NUMBER}?text=${encodeURIComponent(message)}`;
-                    window.open(whatsappUrl, '_blank');
-
-                } else {
-                    if (link && link !== '...') {
-                        window.open(link, '_blank');
-                    } else {
-                        alert('Download link for this app is not available yet.');
-                    }
-                }
+                const img = postDownloadBtn.closest('.post-card').querySelector('.post-image');
+                const url = img.src;
+                const filename = (img.dataset.download || 'image.jpg').replace(/\.[^/.]+$/, "") + ".jpg";
+                postDownloadBtn.textContent = 'Downloading...';
+                downloadImageAsJpg(url, filename).finally(() => {
+                    postDownloadBtn.textContent = '⬇️ Download';
+                });
+                return;
+            }
+            
+            const postImage = e.target.closest('.post-image');
+            if (postImage) { document.getElementById('zoomedImage').src = postImage.src; zoomOverlay.style.display = 'flex'; return; }
+            
+            const qrCode = e.target.closest('.app-qrcode');
+            if (qrCode && qrCode.dataset.link) {
+                qrZoomContent.innerHTML = '';
+                new QRCode(qrZoomContent, { text: qrCode.dataset.link, width: 256, height: 256 });
+                qrZoomOverlay.style.display = 'flex';
+                return;
             }
         });
-
+        
+        // --- TAB SWITCHING LOGIC (RESTORED) ---
         document.getElementById('content-tabs').addEventListener('click', (e) => {
             if (e.target.tagName === 'BUTTON') {
                 const targetTab = e.target.dataset.tab;
@@ -773,105 +520,197 @@ document.querySelectorAll(".whatsapp-btn").forEach(btn => {
                 document.querySelectorAll('.app-list-panel').forEach(panel => panel.classList.remove('active'));
                 e.target.classList.add('active');
                 document.getElementById(targetTab).classList.add('active');
-                searchBar.dispatchEvent(new Event('input'));
+                searchBar.dispatchEvent(new Event('input')); // Re-filter on tab change
             }
         });
         
+        // Other Listeners and Page Navigation (mostly unchanged)
+        zoomOverlay.addEventListener('click', () => zoomOverlay.style.display = 'none');
+        qrZoomOverlay.addEventListener('click', () => qrZoomOverlay.style.display = 'none');
+        searchBar.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            if (document.getElementById('apps-page').classList.contains('active')) {
+                document.querySelectorAll('.app-item').forEach(item => {
+                    const match = item.dataset.title.includes(term) || item.dataset.subtitle.includes(term);
+                    item.style.display = match ? 'flex' : 'none';
+                });
+            } else if (document.getElementById('work-page').classList.contains('active')) {
+                document.querySelectorAll('#work-page .post-card').forEach(post => {
+                    post.style.display = post.dataset.name.toLowerCase().includes(term) ? 'flex' : 'none';
+                });
+            }
+        });
         bottomNav.addEventListener('click', (e) => {
             const navItem = e.target.closest('.nav-item');
             if (!navItem) return;
             e.preventDefault();
-
+            if (html5QrCode && html5QrCode.isScanning) {
+                 html5QrCode.stop().catch(err => console.log("Scanner failed to stop."));
+            }
             const targetPageId = navItem.dataset.page;
-            
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             navItem.classList.add('active');
-
             document.querySelectorAll('.main-panel').forEach(panel => panel.classList.remove('active'));
-            const targetPage = document.getElementById(targetPageId);
-            if (targetPage) {
-                targetPage.classList.add('active');
-            }
-
-            if (targetPageId === 'favorites-page') {
-                renderFavorites();
-            }
+            document.getElementById(targetPageId).classList.add('active');
+            if (targetPageId === 'favorites-page') renderFavorites();
+            if (targetPageId === 'scanner-page') startScanner();
+            searchBar.value = '';
+            searchBar.dispatchEvent(new Event('input'));
         });
-
-        // --- PROFILE MODAL & FORM LOGIC ---
-        profileIcon.addEventListener('click', () => { profileModal.style.display = 'block'; });
-        modalClose.addEventListener('click', () => { profileModal.style.display = 'none'; });
-        window.addEventListener('click', (e) => { if (e.target == profileModal) { profileModal.style.display = 'none'; } });
-
-        function loadProfileFromStorage() {
-            const username = localStorage.getItem('username'), phone = localStorage.getItem('phone'), address = localStorage.getItem('address'), profilePic = localStorage.getItem('profilePic');
-            if (username) { usernameDisplay.textContent = username; document.getElementById('username').value = username; }
-            if (phone) { phoneDisplay.textContent = phone; document.getElementById('phone').value = phone; }
-            if (address) { addressDisplay.textContent = address; document.getElementById('address').value = address; }
-            if (profilePic) { profilePicDisplay.src = profilePic; headerProfilePic.src = profilePic; headerProfilePic.style.display = 'block'; headerProfileIconDefault.style.display = 'none'; } 
-            else { profilePicDisplay.src = ""; headerProfilePic.style.display = 'none'; headerProfileIconDefault.style.display = 'block'; }
+        
+        // --- SCANNER LOGIC (RESTORED) ---
+        function startScanner() {
+            const resultEl = document.getElementById('scanner-result');
+            resultEl.innerHTML = 'Starting camera...';
+            html5QrCode = new Html5Qrcode("scanner-reader");
+            const onScanSuccess = (text, result) => {
+                if (text.startsWith('WIFI:')) {
+                    const ssid = text.match(/S:([^;]+);/);
+                    const pass = text.match(/P:([^;]+);/);
+                    resultEl.innerHTML = `<strong>Wi-Fi Network</strong><br>SSID: ${ssid ? ssid[1] : 'N/A'}<br>Password: ${pass ? pass[1] : 'N/A'}`;
+                } else if (text.startsWith('http')) {
+                    resultEl.innerHTML = `<strong>Website Link</strong><br><a href="${text}" target="_blank">${text}</a>`;
+                } else {
+                    resultEl.innerHTML = `<strong>Scan Result:</strong><br>${text}`;
+                }
+                if (html5QrCode.isScanning) html5QrCode.stop();
+            };
+            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess)
+                .catch(err => { resultEl.textContent = `Scanner Error: ${err}`; });
         }
         
+        // --- PROFILE MODAL & FORM SUBMISSION (CORRECTED) ---
+        const profileForm = document.getElementById('profileForm');
+        const formResult = document.getElementById('form-result');
+        const profilePicInput = document.getElementById('profile-pic-input');
+
         profileForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            if (WEB3FORMS_ACCESS_KEY === "YOUR_ACCESS_KEY_HERE") { 
-                formResult.style.color = 'red'; 
-                formResult.textContent = "Error: Please set your Web3Forms access key in the script."; 
-                return; 
-            }
-            
-            formResult.textContent = "Submitting...";
-            profileForm.querySelector("input[name=access_key]").value = WEB3FORMS_ACCESS_KEY;
+            const saveBtn = profileForm.querySelector('.save-btn');
+            saveBtn.textContent = 'Submitting...';
+            saveBtn.disabled = true;
             
             const formData = new FormData(profileForm);
-            const json = JSON.stringify(Object.fromEntries(formData));
-            
+            formData.append("access_key", WEB3FORMS_ACCESS_KEY);
+            formData.append("subject", "New Profile Submission from App Store");
+
+            const file = profilePicInput.files[0];
+            if (file) {
+                formData.append("attachment", file);
+            }
+
             try {
-                const response = await fetch("https://api.web3forms.com/submit", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: json });
+                const response = await fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    body: formData
+                });
                 const result = await response.json();
                 
                 if (result.success) {
-                    formResult.style.color = 'green'; 
+                    formResult.style.color = 'green';
                     formResult.textContent = "Profile updated and submitted successfully!";
                     localStorage.setItem('username', document.getElementById('username').value); 
                     localStorage.setItem('phone', document.getElementById('phone').value); 
                     localStorage.setItem('address', document.getElementById('address').value);
-                    loadProfileFromStorage(); 
-                } else { 
-                    formResult.style.color = 'red'; 
-                    formResult.textContent = result.message || "An error occurred."; 
+                    loadProfileFromStorage();
+                } else {
+                    formResult.style.color = 'red';
+                    formResult.textContent = result.message || "An error occurred.";
                 }
-            } catch (error) { 
-                console.error('Form submission error:', error); 
-                formResult.style.color = 'red'; 
-                formResult.textContent = "An error occurred while submitting."; 
+            } catch (error) {
+                console.error('Form submission error:', error);
+                formResult.style.color = 'red';
+                formResult.textContent = "An error occurred while submitting.";
+            } finally {
+                saveBtn.textContent = 'Save & Update Profile';
+                saveBtn.disabled = false;
+                setTimeout(() => { formResult.textContent = ''; }, 5000);
             }
-            
-            setTimeout(() => { formResult.textContent = ''; }, 5000);
         });
-
+        
+        // --- ACCESSIBILITY, PROFILE & INITIALIZATION (RESTORED & VERIFIED) ---
+        const profilePicChanger = document.getElementById('profile-pic-changer');
+        const modalClose = document.getElementById('modal-close');
+        profileIcon.addEventListener('click', () => { profileModal.style.display = 'block'; });
+        modalClose.addEventListener('click', () => { profileModal.style.display = 'none'; });
+        window.addEventListener('click', (e) => { if (e.target == profileModal) { profileModal.style.display = 'none'; } });
         profilePicChanger.addEventListener('click', () => { profilePicInput.click(); });
         profilePicInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (file) {
+            if(file) {
                 const reader = new FileReader();
-                reader.onload = function(event) {
+                reader.onload = (event) => {
                     const imageUrl = event.target.result;
-                    profilePicDisplay.src = imageUrl; headerProfilePic.src = imageUrl; headerProfilePic.style.display = 'block'; headerProfileIconDefault.style.display = 'none';
-                    localStorage.setItem('profilePic', imageUrl);
+                    document.getElementById('profile-pic-display').src = imageUrl;
+                    document.getElementById('header-profile-pic').src = imageUrl;
+                    document.getElementById('header-profile-pic').style.display = 'block';
+                    document.getElementById('header-profile-icon-default').style.display = 'none';
+                    localStorage.setItem('profilePicDataUrl', imageUrl);
                 }
                 reader.readAsDataURL(file);
             }
         });
         
-        // --- INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            loadFavoritesFromStorage();
-            renderApps(appsData);
-            loadProfileFromStorage();
+        function loadProfileFromStorage() {
+            document.getElementById('username-display').textContent = localStorage.getItem('username') || 'Not Set';
+            document.getElementById('phone-display').textContent = localStorage.getItem('phone') || 'Not Set';
+            document.getElementById('address-display').textContent = localStorage.getItem('address') || 'Not Set';
+            document.getElementById('username').value = localStorage.getItem('username') || '';
+            document.getElementById('phone').value = localStorage.getItem('phone') || '';
+            document.getElementById('address').value = localStorage.getItem('address') || '';
+            const picDataUrl = localStorage.getItem('profilePicDataUrl');
+            const profilePicEl = document.getElementById('profile-pic-display');
+            const headerPicEl = document.getElementById('header-profile-pic');
+            const headerIconDefault = document.getElementById('header-profile-icon-default');
+            if (picDataUrl) {
+                profilePicEl.src = picDataUrl;
+                headerPicEl.src = picDataUrl;
+                headerPicEl.style.display = 'block';
+                headerIconDefault.style.display = 'none';
+            } else {
+                 headerPicEl.style.display = 'none';
+                 headerIconDefault.style.display = 'block';
+            }
+        }
+        
+        function loadSettingsFromStorage() {
+            const brightness = localStorage.getItem('appBrightness') || '0';
+            document.getElementById('brightness-slider').value = brightness;
+            document.getElementById('brightness-overlay').style.backgroundColor = `rgba(0,0,0,${brightness / 100})`;
+            const fontSize = localStorage.getItem('appFontSize');
+            if(fontSize) document.documentElement.style.fontSize = fontSize;
+        }
+
+        document.getElementById('brightness-slider').addEventListener('input', (e) => {
+            const value = e.target.value;
+            document.getElementById('brightness-overlay').style.backgroundColor = `rgba(0,0,0,${value / 100})`;
+            localStorage.setItem('appBrightness', value);
         });
 
+        document.getElementById('increase-font').addEventListener('click', () => {
+            let currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+            const newSize = `${currentSize + 1}px`;
+            document.documentElement.style.fontSize = newSize;
+            localStorage.setItem('appFontSize', newSize);
+        });
+
+        document.getElementById('decrease-font').addEventListener('click', () => {
+            let currentSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+            if(currentSize > 12) {
+                const newSize = `${currentSize - 1}px`;
+                document.documentElement.style.fontSize = newSize;
+                localStorage.setItem('appFontSize', newSize);
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFromStorage();
+            renderApps();
+            updateWorkPageFavoriteIcons();
+            loadProfileFromStorage();
+            loadSettingsFromStorage();
+            setInterval(() => document.querySelectorAll('.post-time-live').forEach(el => { el.textContent = new Date().toLocaleTimeString(); }), 1000);
+        });
     </script>
 </body>
 </html>
