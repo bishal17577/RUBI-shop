@@ -26,6 +26,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0; background-color: var(--background-color); color: var(--text-primary);
             padding-top: 60px; padding-bottom: 70px;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
         }
         .brightness-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -34,7 +35,8 @@
         }
         .header {
             position: fixed; top: 0; left: 0; width: 100%; display: flex;
-            align-items: center; gap: 15px; padding: 10px 15px;
+            align-items: center; gap: 10px; /* MODIFIED: Reduced gap for smaller screens */
+            padding: 10px 15px;
             background-color: var(--surface-color); box-shadow: var(--shadow-1);
             z-index: 1000;
         }
@@ -43,11 +45,13 @@
             flex-grow: 1; padding: 10px 15px; border: 1px solid var(--border-color);
             border-radius: 25px; background-color: var(--background-color);
             font-size: 0.95rem; outline-color: var(--primary-color);
+            min-width: 0; /* ADDED: Prevents search bar from overflowing */
         }
         .header .profile-icon {
             width: 40px; height: 40px; border-radius: 50%; background-color: var(--background-color);
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; overflow: hidden; border: 1px solid var(--border-color);
+            flex-shrink: 0; /* ADDED: Prevents icon from shrinking */
         }
         .header .profile-icon img { width: 100%; height: 100%; object-fit: cover; }
         .header .profile-icon i { font-size: 1.25rem; color: var(--text-secondary); }
@@ -66,8 +70,9 @@
         }
         .content-tabs button {
             background: none; border: none; font-size: 1rem; font-weight: 600;
-            color: var(--text-secondary); padding: 12px 10px; cursor: pointer;
-            border-bottom: 3px solid transparent; transition: color 0.2s ease, border-color 0.2s ease;
+            color: var(--text-secondary); padding: 12px 8px; /* MODIFIED: Slightly reduced horizontal padding */
+            cursor: pointer; border-bottom: 3px solid transparent; 
+            transition: color 0.2s ease, border-color 0.2s ease;
             white-space: nowrap;
         }
         .content-tabs button:hover { background-color: var(--background-color); border-radius: 8px; }
@@ -80,18 +85,40 @@
             background-color: var(--surface-color); margin: 10px 0;
             border-radius: 12px; box-shadow: var(--shadow-1);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            gap: 12px; /* ADDED: Use gap for consistent spacing */
         }
         .app-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
-        .app-logo { width: 60px; height: 60px; border-radius: 15px; object-fit: cover; margin-right: 15px; flex-shrink: 0; }
+        .app-logo { 
+            width: 60px; height: 60px; border-radius: 15px; 
+            object-fit: cover; flex-shrink: 0; 
+            margin-right: 0; /* MODIFIED: Removed margin, using gap on parent now */
+        }
         .app-details { flex-grow: 1; min-width: 0; }
-        .app-title { font-weight: 600; font-size: 1.05rem; margin: 0; }
-        .app-subtitle { font-size: 0.875rem; color: var(--text-secondary); margin: 4px 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .app-actions { display: flex; align-items: center; gap: 15px; }
+        .app-title { 
+            font-weight: 600; font-size: 1.05rem; margin: 0; 
+            word-break: break-word; /* ADDED: Prevents long titles from overflowing */
+        }
+        .app-subtitle { 
+    font-size: 0.875rem; 
+    color: var(--text-secondary); 
+    margin: 4px 0 0; 
+    white-space: nowrap;      /* ADDED: Prevents the text from wrapping to a new line */
+    overflow: hidden;         /* ADDED: Hides any text that overflows the element's width */
+    text-overflow: ellipsis;  /* ADDED: Displays "..." when the text is clipped */
+    /* The non-standard -webkit-box properties have been removed for maximum compatibility. */
+}
+        .app-actions { 
+            display: flex; align-items: center; 
+            gap: 10px; /* MODIFIED: Reduced gap for flexibility */
+            flex-shrink: 0; /* ADDED: Prevents this container from shrinking too much */
+        }
         .download-button {
-            padding: 8px 18px; border-radius: 20px; border: none; font-weight: 700;
+            padding: 8px 16px; /* MODIFIED: Adjusted padding */
+            border-radius: 20px; border: none; font-weight: 700;
             cursor: pointer; text-decoration: none; color: var(--surface-color);
             background-color: var(--primary-color); font-size: 0.875rem; text-align: center;
-            transition: background-color 0.2s ease, transform 0.1s ease; white-space: nowrap;
+            transition: background-color 0.2s ease, transform 0.1s ease; 
+            white-space: nowrap; /* MODIFIED: Kept nowrap but layout is now more robust */
         }
         .download-button:active { transform: scale(0.95); }
         .download-button.paid { background-color: #28a745; }
@@ -111,14 +138,19 @@
         .post-card {
             background: var(--surface-color); border-radius: 12px; padding: 16px;
             box-shadow: var(--shadow-1); display: flex; flex-direction: column;
+            overflow-wrap: break-word; /* ADDED: Ensures text wraps properly */
         }
         .post-card .post-time-live { font-size: 0.8rem; color: var(--primary-color); font-weight: 600; }
         .post-image { width: 100%; border-radius: 8px; margin-top: 12px; cursor: pointer; transition: transform 0.3s ease; }
-        .action-buttons { display:flex; justify-content:space-around; margin-top:5px; }
+        .action-buttons { display:flex; justify-content:space-around; margin-top:5px; gap: 5px; /* ADDED: Gap for buttons */ }
         .action-buttons button {
-            border: none; background: none; cursor: pointer; padding: 8px 10px;
+            border: none; background: none; cursor: pointer; padding: 8px; /* MODIFIED: Simplified padding */
             font-size: 0.875rem; color: var(--text-secondary); font-weight: 600;
-            border-radius: 6px; transition: background-color 0.2s ease; flex-grow: 1;
+            border-radius: 6px; transition: background-color 0.2s ease; 
+            flex-grow: 1; flex-basis: 0; /* ADDED: Ensures buttons share space equally */
+            white-space: nowrap; /* ADDED: Prevents button text from wrapping */
+            overflow: hidden; /* ADDED: Hides overflowing text if necessary */
+            text-overflow: ellipsis; /* ADDED: Adds ... if text is too long */
         }
         .action-buttons button:hover { background-color: var(--background-color); }
         .zoom-overlay, #qr-zoom-overlay {
@@ -141,11 +173,16 @@
         }
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--text-secondary); text-decoration: none; padding: 5px 10px;
+            color: var(--text-secondary); text-decoration: none; padding: 5px; /* MODIFIED: Adjusted padding */
             cursor: pointer; transition: color 0.2s ease; flex-grow: 1; height: 100%;
+            min-width: 0; /* ADDED: Allows nav item to shrink */
         }
         .nav-item i { font-size: 1.4rem; }
-        .nav-item span { font-size: 0.75rem; margin-top: 4px; }
+        .nav-item span { 
+            font-size: 0.75rem; margin-top: 4px; 
+            text-align: center; /* ADDED: Center align nav text */
+            word-break: break-word; /* ADDED: Allow text to wrap if absolutely needed */
+        }
         .nav-item.active { color: var(--primary-color); }
         .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
         .modal-content {
@@ -155,12 +192,13 @@
         }
         .modal .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
         .modal-content h2 { margin-top: 0; }
-        .modal-content .profile-display { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+        .modal-content .profile-display { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; /* ADDED: Allows wrapping on small screens */ }
         .modal-content .profile-pic-container { width: 80px; height: 80px; border-radius: 50%; background: #eee; position: relative; cursor: pointer; overflow: hidden; }
         #profile-pic-display { width: 100%; height: 100%; object-fit: cover; }
         .profile-pic-container .overlay { position: absolute; bottom: 0; background: rgba(0,0,0,0.5); color: white; width: 100%; text-align: center; font-size: 12px; padding: 4px 0; }
         #profile-pic-input { display: none; }
-        .profile-info p { margin: 4px 0; font-size: 14px; }
+        .profile-info { flex-grow: 1; } /* MODIFIED: Let info grow */
+        .profile-info p { margin: 4px 0; font-size: 14px; word-break: break-all; /* ADDED: Break long strings in profile */ }
         .profile-info strong { color: #333; }
         .modal-content form { display: flex; flex-direction: column; gap: 15px; }
         .modal-content input[type="text"], .modal-content input[type="tel"] { padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 16px; }
@@ -175,7 +213,7 @@
             border-radius: 5px; cursor: pointer;
         }
         @media (min-width: 768px) {
-            body { padding-bottom: 0; padding-left: var(--sidebar-width); }
+            body { padding-bottom: 0; padding-left: var(--sidebar-width); overflow-x: auto; /* Revert for desktop */ }
             .bottom-nav {
                 width: var(--sidebar-width); height: 100vh; flex-direction: column; justify-content: flex-start;
                 align-items: stretch; padding: 20px 0; top: 60px; box-shadow: none; border-top: none;
@@ -188,13 +226,13 @@
             .nav-item i { font-size: 1.25rem; margin-right: 20px; width: 24px; }
             .nav-item span { font-size: 1rem; font-weight: 500; }
             .nav-item.active { background-color: var(--primary-color-light); color: var(--primary-color); }
-            .header { padding: 10px 30px; left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); }
+            .header { padding: 10px 30px; left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); gap: 15px; /* Revert gap */ }
             .header .logo { display: none; }
             .app-list-panel, #favorite-apps-container {
                 display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
                 gap: 20px; padding: 0;
             }
-            .app-item { margin-bottom: 0; }
+            .app-item { margin-bottom: 0; gap: 15px; /* Revert gap */ }
             #work-page-container { grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); }
             @media (min-width: 1200px) {
                 #work-page-container { grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); }
