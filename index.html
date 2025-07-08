@@ -7,9 +7,9 @@
     <!-- Using Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-      <!-- Library for QR Code Generation -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-
+    <!-- Library for QR Code Scanning -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    
     <style>
         /* --- MODERN & RESPONSIVE DESIGN --- */
         :root {
@@ -97,14 +97,13 @@
             word-break: break-word; /* ADDED: Prevents long titles from overflowing */
         }
         .app-subtitle { 
-    font-size: 0.875rem; 
-    color: var(--text-secondary); 
-    margin: 4px 0 0; 
-    white-space: nowrap;      /* ADDED: Prevents the text from wrapping to a new line */
-    overflow: hidden;         /* ADDED: Hides any text that overflows the element's width */
-    text-overflow: ellipsis;  /* ADDED: Displays "..." when the text is clipped */
-    /* The non-standard -webkit-box properties have been removed for maximum compatibility. */
-}
+            font-size: 0.875rem; 
+            color: var(--text-secondary); 
+            margin: 4px 0 0; 
+            white-space: nowrap;      /* ADDED: Prevents the text from wrapping to a new line */
+            overflow: hidden;         /* ADDED: Hides any text that overflows the element's width */
+            text-overflow: ellipsis;  /* ADDED: Displays "..." when the text is clipped */
+        }
         .app-actions { 
             display: flex; align-items: center; 
             gap: 10px; /* MODIFIED: Reduced gap for flexibility */
@@ -381,8 +380,8 @@
             appDiv.dataset.id = app.id;
             appDiv.dataset.title = app.title.toLowerCase();
             appDiv.dataset.subtitle = app.subtitle.toLowerCase();
+            // MODIFIED: Removed the app-qrcode div from the template
             appDiv.innerHTML = `
-                <div class="app-qrcode" id="qrcode-${app.id}"></div>
                 <img src="${app.imageSrc}" alt="${app.title} Logo" class="app-logo"> 
                 <div class="app-details">
                     <p class="app-title">${app.title}</p>
@@ -392,12 +391,7 @@
                     <a href="#" class="download-button ${isPaid ? 'paid' : 'free'}" data-type="${isPaid ? 'paid' : 'free'}" data-link="${app.downloadLink || ''}" data-price="${app.price || ''}" data-title="${app.title}">${isPaid ? `Rs${app.price}` : 'GET'}</a>
                     <button class="fav-button ${isFavorited ? 'favorited' : ''}"><i class="${isFavorited ? 'fas' : 'far'} fa-heart"></i></button>
                 </div>`;
-            if (app.downloadLink) {
-                setTimeout(() => {
-                    const qrContainer = appDiv.querySelector(`#qrcode-${app.id}`);
-                    if (qrContainer) try { new QRCode(qrContainer, { text: app.downloadLink, width: 40, height: 40 }); } catch(e) { console.error("QR Code Error:", e); }
-                }, 0);
-            }
+            // MODIFIED: Removed the QR code generation logic
             return appDiv;
         }
         
@@ -520,18 +514,7 @@
                 return;
             }
             
-            // QR Code Zoom
-            const qrCode = target.closest('.app-qrcode');
-            if (qrCode && qrCode.id) {
-                const qrContent = document.getElementById('qr-zoom-overlay-content');
-                qrContent.innerHTML = '';
-                const appData = appsData.find(app => `qrcode-${app.id}` === qrCode.id);
-                if(appData && appData.downloadLink) {
-                    new QRCode(qrContent, { text: appData.downloadLink, width: 256, height: 256 });
-                    document.getElementById('qr-zoom-overlay').style.display = 'flex';
-                }
-                return;
-            }
+            // MODIFIED: Removed the QR Code Zoom logic
 
             // Work Page Actions
             const postDownloadBtn = target.closest('.post-download-btn');
