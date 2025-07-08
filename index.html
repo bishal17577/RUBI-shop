@@ -99,14 +99,13 @@
             word-break: break-word; /* ADDED: Prevents long titles from overflowing */
         }
         .app-subtitle { 
-    font-size: 0.875rem; 
-    color: var(--text-secondary); 
-    margin: 4px 0 0; 
-    white-space: nowrap;      /* ADDED: Prevents the text from wrapping to a new line */
-    overflow: hidden;         /* ADDED: Hides any text that overflows the element's width */
-    text-overflow: ellipsis;  /* ADDED: Displays "..." when the text is clipped */
-    /* The non-standard -webkit-box properties have been removed for maximum compatibility. */
-}
+            font-size: 0.875rem; 
+            color: var(--text-secondary); 
+            margin: 4px 0 0; 
+            white-space: nowrap;      /* Keep text on a single line */
+            overflow: hidden;         /* Hide text that overflows the container */
+            text-overflow: ellipsis;  /* Add '...' to the end of truncated text */
+        }
         .app-actions { 
             display: flex; align-items: center; 
             gap: 10px; /* MODIFIED: Reduced gap for flexibility */
