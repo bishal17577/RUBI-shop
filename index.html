@@ -7,10 +7,9 @@
     <!-- Using Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Library for QR Code Scanning -->
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <!-- Library for QR Code Generation -->
+      <!-- Library for QR Code Generation -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
     <style>
         /* --- MODERN & RESPONSIVE DESIGN --- */
         :root {
@@ -98,13 +97,14 @@
             word-break: break-word; /* ADDED: Prevents long titles from overflowing */
         }
         .app-subtitle { 
-            font-size: 0.875rem; 
-            color: var(--text-secondary); 
-            margin: 4px 0 0; 
-            white-space: nowrap;      /* Keep text on a single line */
-            overflow: hidden;         /* Hide text that overflows the container */
-            text-overflow: ellipsis;  /* Add '...' to the end of truncated text */
-        }
+    font-size: 0.875rem; 
+    color: var(--text-secondary); 
+    margin: 4px 0 0; 
+    white-space: nowrap;      /* ADDED: Prevents the text from wrapping to a new line */
+    overflow: hidden;         /* ADDED: Hides any text that overflows the element's width */
+    text-overflow: ellipsis;  /* ADDED: Displays "..." when the text is clipped */
+    /* The non-standard -webkit-box properties have been removed for maximum compatibility. */
+}
         .app-actions { 
             display: flex; align-items: center; 
             gap: 10px; /* MODIFIED: Reduced gap for flexibility */
@@ -126,22 +126,7 @@
         }
         .fav-button:hover { transform: scale(1.1); }
         .fav-button.favorited { color: #e53935; }
-        .app-qrcode {
-            position: absolute; /* CORRECTED: "center" is not a valid value. "absolute" is correct. */
-            top: 5px; 
-            right: 5px; 
-            width: 50px; 
-            height: 50px;
-            background: white; 
-            padding: 4px; 
-            border-radius: 4px; 
-            box-shadow: var(--shadow-1);
-            opacity: 0; 
-            transition: opacity 0.2s ease; 
-            cursor: pointer;
-        }
-        .app-item:hover .app-qrcode { opacity: 1; }
-        #work-page-container { display: grid; grid-template-columns: 1fr; gap: 16px; font-family: Arial, sans-serif; }
+         #work-page-container { display: grid; grid-template-columns: 1fr; gap: 16px; font-family: Arial, sans-serif; }
         .post-card {
             background: var(--surface-color); border-radius: 12px; padding: 16px;
             box-shadow: var(--shadow-1); display: flex; flex-direction: column;
@@ -246,7 +231,6 @@
             }
         }
     </style>
-  
 </head>
 <body>
     <div class="brightness-overlay" id="brightness-overlay"></div>
